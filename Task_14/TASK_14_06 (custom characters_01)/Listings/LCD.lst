@@ -1,0 +1,98 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/23/2024 16:57:15 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          #include "LCD.h"
+   2          
+   3          // Custom character definitions
+   4          unsigned char battery[8] = {0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E, 0x00};
+   5          unsigned char tick[8] = {0x00, 0x01, 0x02, 0x14, 0x08, 0x00, 0x00, 0x00};
+   6          unsigned char cross[8] = {0x00, 0x11, 0x0A, 0x04, 0x0A, 0x11, 0x00, 0x00};
+   7          
+   8          // Function to initialize the LCD
+   9          void lcd_init() {
+  10   1          cmd(0x38);          // Initialize the LCD in 8-bit mode, 2 lines, 5x7 matrix
+  11   1          cmd(0x0e);          // Display ON, cursor ON
+  12   1          cmd(0x01);          // Clear display screen
+  13   1          cmd(0x06);          // Entry mode, auto increment with no shift
+  14   1          cmd(0x0c);          // Display ON, cursor OFF
+  15   1          cmd(0x80);          // Set cursor position to the beginning of the first line
+  16   1          
+  17   1          // Create custom characters
+  18   1          create_custom_char(0, battery); // Create battery symbol at location 0
+  19   1          create_custom_char(1, tick);    // Create tick symbol at location 1
+  20   1          create_custom_char(2, cross);   // Create cross symbol at location 2
+  21   1      }
+  22          
+  23          // Function to send a command to the LCD
+  24          void cmd(unsigned char a) {
+  25   1          lcd_data = a;          // Send command to data port
+  26   1          rs = 0;                // Select command register
+  27   1          rw = 0;                // Write operation
+  28   1          en = 1;                // Generate enable pulse
+  29   1          lcd_delay();           // Wait for the command to be processed
+  30   1          en = 0;                // End enable pulse
+  31   1      }
+  32          
+  33          // Function to send data to the LCD
+  34          void dat(unsigned char b) {
+  35   1          lcd_data = b;          // Send data to data port
+  36   1          rs = 1;                // Select data register
+  37   1          rw = 0;                // Write operation
+  38   1          en = 1;                // Generate enable pulse
+  39   1          lcd_delay();           // Wait for the data to be processed
+  40   1          en = 0;                // End enable pulse
+  41   1      }
+  42          
+  43          // Function to display a string on the LCD
+  44          void show(unsigned char *s) {
+  45   1          while(*s) {   // Loop until the end of the string
+  46   2              dat(*s++); // Send each character to the LCD
+  47   2          }
+  48   1      }
+  49          
+  50          // Delay function for LCD timing
+  51          void lcd_delay() {
+  52   1          unsigned int lcd_delay;
+  53   1          for(lcd_delay = 0; lcd_delay <= 20000; lcd_delay++); // Simple delay loop
+  54   1      }
+C51 COMPILER V9.60.7.0   LCD                                                               09/23/2024 16:57:15 PAGE 2   
+
+  55          
+  56          // Function to create a custom character
+  57          void create_custom_char(unsigned char loc, unsigned char *charmap) {
+  58   1          int i;
+  59   1          if(loc < 8) { // We have only 8 locations (0-7) to store custom characters
+  60   2              cmd(0x40 + (loc * 8)); // Command to set CGRAM address
+  61   2              for(i = 0; i < 8; i++) {
+  62   3                  dat(charmap[i]); // Write character pattern to CGRAM
+  63   3              }
+  64   2          }
+  65   1      }
+  66          
+  67          // Function to display a custom character
+  68          void display_custom_char(unsigned char loc) {
+  69   1          if(loc < 8) {
+  70   2              dat(loc); // Send location to display the custom character
+  71   2          }
+  72   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    220    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     24       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

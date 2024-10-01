@@ -1,0 +1,94 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/20/2024  11:31:44  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task_6.obj TO .\Objects\Task_6 PRINT (.\Listings\Task_6.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task_6.obj (TASK_6)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\Task_6 (TASK_6)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+            CODE    0006H     0041H     UNIT         ?PR?EXTERNAL_INT0?TASK_6
+            CODE    0047H     0020H     UNIT         ?PR?_MSDELAY?TASK_6
+            CODE    0067H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0073H     0004H     UNIT         ?PR?MAIN?TASK_6
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Task_6 (TASK_6)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?PR?EXTERNAL_INT0?TASK_6
+  +--> ?PR?_MSDELAY?TASK_6
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_6
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Task_6 (TASK_6)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_6
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:00A8H         PUBLIC        IE
+  C:0047H         PUBLIC        _MSDelay
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  11:31:44  PAGE 2
+
+
+  C:0073H         PUBLIC        main
+  B:00A0H.0       PUBLIC        led
+  C:0006H         PUBLIC        external_int0
+  -------         PROC          EXTERNAL_INT0
+  C:0006H         LINE#         7
+  C:0023H         LINE#         9
+  C:0025H         LINE#         10
+  C:002CH         LINE#         12
+  -------         ENDPROC       EXTERNAL_INT0
+  -------         PROC          MAIN
+  C:0073H         LINE#         15
+  C:0073H         LINE#         16
+  C:0073H         LINE#         17
+  C:0076H         LINE#         18
+  -------         ENDPROC       MAIN
+  -------         PROC          _MSDELAY
+  D:0006H         SYMBOL        itime
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:0047H         LINE#         21
+  C:0047H         LINE#         23
+  C:0051H         LINE#         24
+  C:0066H         LINE#         25
+  -------         ENDPROC       _MSDELAY
+  -------         ENDMOD        TASK_6
+
+Program Size: data=9.0 xdata=0 code=119
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

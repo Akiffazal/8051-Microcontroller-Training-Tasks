@@ -1,0 +1,75 @@
+C51 COMPILER V9.60.7.0   TASK_9                                                            09/20/2024 12:27:31 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_9
+OBJECT MODULE PLACED IN .\Objects\task_9.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_9.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk_9.lst) TABS(2) OBJECT(.\Objects\task_9.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit led_1 = P2^0;
+   4          unsigned int x=0;
+   5          
+   6          void Timer_0() interrupt 1 {
+   7   1        x++;
+   8   1        if(x==401)
+   9   1          {
+  10   2            led_1 = ~led_1;      // Toggle LED
+  11   2            x=0;
+  12   2          }
+  13   1      }
+  14          
+  15          void main() {
+  16   1      
+  17   1        IE = 0x82;           // Enable Timer 0 interrupt
+  18   1        TMOD = 0x02;         // Set Timer 0 mode to 8-bit auto reload
+  19   1        TH0 = -23;           // Set initial value for Timer 0 high byte
+  20   1        TR0=1;
+  21   1        while(1)
+  22   1        {
+  23   2        }
+  24   1      }
+  25          
+  26          
+  27          
+  28          
+  29          
+  30          
+  31          //#include <reg52.h>
+  32          
+  33          //sbit led_1 = P2^0;
+  34          
+  35          //void Timer_0() interrupt 1 {
+  36          //  unsigned char x,y;
+  37          //  
+  38          //  for (x=0;x<82;x++)
+  39          //    for (y=0;y<36;y++);
+  40          //  
+  41          //  led_1 = ~led_1;      // Toggle LED
+  42          //}
+  43          
+  44          //void main() {
+  45          //  IE = 0x82;           // Enable Timer 0 interrupt
+  46          //  TMOD = 0x02;         // Set Timer 0 mode to 8-bit auto reload
+  47          //  TH0 = -23;           // Set initial value for Timer 0 high byte
+  48          //  TR0=1;
+  49          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     46    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.60.7.0   TASK_9                                                            09/20/2024 12:27:31 PAGE 2   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

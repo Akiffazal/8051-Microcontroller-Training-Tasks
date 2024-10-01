@@ -1,0 +1,100 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/20/2024  12:27:31  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task_9.obj TO .\Objects\task_9 PRINT (.\Listings\task_9.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task_9.obj (TASK_9)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\task_9 (TASK_9)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?TASK_9
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0005H     UNIT         ?C_INITSEG
+                    0008H     0003H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     008CH     UNIT         ?C_C51STARTUP
+            CODE    009AH     0021H     UNIT         ?PR?TIMER_0?TASK_9
+            CODE    00BBH     000DH     UNIT         ?PR?MAIN?TASK_9
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\task_9 (TASK_9)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_9
+  +--> ?C_INITSEG
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\task_9 (TASK_9)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_9
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  12:27:31  PAGE 2
+
+
+  C:009AH         PUBLIC        Timer_0
+  D:00B8H         PUBLIC        IP
+  C:00BBH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  B:00A0H.0       PUBLIC        led_1
+  D:008CH         PUBLIC        TH0
+  B:0088H.4       PUBLIC        TR0
+  D:00C8H         PUBLIC        T2CON
+  D:0008H         PUBLIC        x
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          TIMER_0
+  C:009AH         LINE#         6
+  C:009EH         LINE#         7
+  C:00A6H         LINE#         8
+  C:00AEH         LINE#         9
+  C:00AEH         LINE#         10
+  C:00B0H         LINE#         11
+  C:00B6H         LINE#         12
+  C:00B6H         LINE#         13
+  -------         ENDPROC       TIMER_0
+  -------         PROC          MAIN
+  C:00BBH         LINE#         15
+  C:00BBH         LINE#         17
+  C:00BEH         LINE#         18
+  C:00C1H         LINE#         19
+  C:00C4H         LINE#         20
+  C:00C6H         LINE#         21
+  C:00C6H         LINE#         22
+  C:00C6H         LINE#         23
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        TASK_9
+
+Program Size: data=11.0 xdata=0 code=197
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

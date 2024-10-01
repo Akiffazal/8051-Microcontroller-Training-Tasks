@@ -1,0 +1,137 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/20/2024  12:16:52  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task_8.obj TO .\Objects\task_8 PRINT (.\Listings\task_8.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task_8.obj (TASK_8)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\task_8 (TASK_8)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+            CODE    0006H     000CH     UNIT         ?C_C51STARTUP
+                    0012H     0001H                  *** GAP ***
+            CODE    0013H     0003H     ABSOLUTE     
+            CODE    0016H     003DH     UNIT         ?PR?EXTERNAL_INT0?TASK_8
+            CODE    0053H     003DH     UNIT         ?PR?EXTERNAL_INT1?TASK_8
+            CODE    0090H     0024H     UNIT         ?PR?_MSDELAY?TASK_8
+            CODE    00B4H     0017H     UNIT         ?PR?MAIN?TASK_8
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\task_8 (TASK_8)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?PR?EXTERNAL_INT0?TASK_8
+  +--> ?PR?_MSDELAY?TASK_8
+
+*** NEW ROOT ***************************************************
+
+?PR?EXTERNAL_INT1?TASK_8
+  +--> ?PR?_MSDELAY?TASK_8
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_8
+
+?PR?MAIN?TASK_8
+  +--> ?PR?_MSDELAY?TASK_8
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  12:16:52  PAGE 2
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\task_8 (TASK_8)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_8
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  C:0094H         PUBLIC        _MSDelay
+  C:00B4H         PUBLIC        main
+  C:0016H         PUBLIC        external_int0
+  C:0053H         PUBLIC        external_int1
+  B:00B0H.0       PUBLIC        switch1
+  B:00B0H.1       PUBLIC        switch2
+  B:00A0H.0       PUBLIC        led1
+  B:00A0H.1       PUBLIC        led2
+  B:00A0H.2       PUBLIC        led3
+  B:00A0H.3       PUBLIC        led4
+  -------         PROC          EXTERNAL_INT0
+  C:0016H         LINE#         14
+  C:0033H         LINE#         16
+  C:0035H         LINE#         17
+  C:0038H         LINE#         18
+  -------         ENDPROC       EXTERNAL_INT0
+  -------         PROC          EXTERNAL_INT1
+  C:0053H         LINE#         21
+  C:0070H         LINE#         23
+  C:0072H         LINE#         24
+  C:0075H         LINE#         26
+  -------         ENDPROC       EXTERNAL_INT1
+  -------         PROC          MAIN
+  C:00B4H         LINE#         28
+  C:00B4H         LINE#         29
+  C:00B4H         LINE#         30
+  C:00B7H         LINE#         31
+  C:00B7H         LINE#         32
+  C:00B7H         LINE#         33
+  C:00BAH         LINE#         34
+  C:00BAH         LINE#         35
+  C:00BCH         LINE#         36
+  C:00BFH         LINE#         37
+  C:00C1H         LINE#         39
+  C:00C4H         LINE#         40
+  C:00C4H         LINE#         41
+  C:00C6H         LINE#         42
+  C:00C9H         LINE#         43
+  C:00C9H         LINE#         44
+  -------         ENDPROC       MAIN
+  C:0090H         SYMBOL        L?0019
+  -------         PROC          L?0018
+  -------         ENDPROC       L?0018
+  C:0090H         SYMBOL        L?0019
+  -------         PROC          _MSDELAY
+  D:0006H         SYMBOL        itime
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  12:16:52  PAGE 3
+
+
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:0094H         LINE#         48
+  C:0094H         LINE#         50
+  C:009EH         LINE#         51
+  C:00B3H         LINE#         52
+  -------         ENDPROC       _MSDELAY
+  -------         ENDMOD        TASK_8
+
+Program Size: data=9.0 xdata=0 code=202
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

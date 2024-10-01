@@ -1,0 +1,167 @@
+C51 COMPILER V9.60.7.0   T_14_4                                                            09/23/2024 16:25:13 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE T_14_4
+OBJECT MODULE PLACED IN .\Objects\T_14_4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE T_14_4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\T_
+                    -14_4.lst) TABS(2) OBJECT(.\Objects\T_14_4.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          
+   4          int main() 
+   5            {
+   6   1          while(1){
+   7   2          lcd_init();    // Initialize the LCD
+   8   2          lcd_clear(); // Clear the LCD
+   9   2        
+  10   2          lcd_write(0, 0, 'H');  // Write 'H' at the beginning of the first line
+  11   2          lcd_write(0, 1, 'e');  // Write 'e' at the second position of the first line
+  12   2          lcd_write(0, 2, 'l');  // Write 'l' at the third position of the first line
+  13   2          lcd_write(0, 3, 'l');  // Write 'l' at the fourth position of the first line
+  14   2          lcd_write(0, 4, 'o');  // Write 'o' at the fifth position of the first line
+  15   2      
+  16   2          //    lcd_set_cursor(1, 0);  // Set cursor to the beginning of the second line
+  17   2          lcd_write(1, 0, 'W');  // Write 'W' at the beginning of the second line
+  18   2          lcd_write(1, 1, 'o');  // Write 'o' at the second position of the second line
+  19   2          lcd_write(1, 2, 'r');  // Write 'r' at the third position of the second line
+  20   2          lcd_write(1, 3, 'l');  // Write 'l' at the fourth position of the second line
+  21   2          lcd_write(1, 4, 'd');  // Write 'd' at the fifth position of the second line
+  22   2      
+  23   2          //    while(1); // Infinite loop to keep the microcontroller running
+  24   2            }
+  25   1      }
+  26          
+  27          
+  28          
+  29          
+  30          
+  31          
+  32          
+  33          
+  34          
+  35          
+  36          
+  37          
+  38          
+  39          
+  40          
+  41          
+  42          
+  43          ///////*Method_01*/
+  44          //////#include <reg51.h>
+  45          
+  46          //////sbit wr = P2^5;
+  47          //////sbit rs = P2^6;
+  48          //////sbit en = P2^7;
+  49          
+  50          //////#define text P0
+  51          
+  52          //////void delay_ms() {
+  53          //////    int i, j;
+  54          //////    for(i = 0; i < 100; i++) {
+C51 COMPILER V9.60.7.0   T_14_4                                                            09/23/2024 16:25:13 PAGE 2   
+
+  55          //////        for (j = 0; j < 100; j++);
+  56          //////    }
+  57          //////}
+  58          
+  59          //////void lcd_delay() {
+  60          //////    delay_ms();
+  61          //////}
+  62          
+  63          //////void lcd_cmd(unsigned char a){
+  64          //////  text = a;
+  65          //////  rs = 0; 
+  66          //////  wr = 0; 
+  67          //////  en = 1;
+  68          //////  lcd_delay();
+  69          //////  en = 0;
+  70          //////}
+  71          
+  72          //////void lcd_data(unsigned char b){
+  73          //////  text = b;
+  74          //////  rs = 1; 
+  75          //////  wr = 0;
+  76          //////  en = 1;
+  77          //////  lcd_delay();
+  78          //////  en = 0;
+  79          //////}
+  80          
+  81          //////void lcd_init() {
+  82          //////    lcd_cmd(0x01); 
+  83          //////    delay_ms();    
+  84          //////    lcd_cmd(0x38);
+  85          //////    delay_ms();      
+  86          //////    lcd_cmd(0x0E); 
+  87          //////    delay_ms();     
+  88          //////    lcd_cmd(0x10); 
+  89          //////    delay_ms();      
+  90          //////    lcd_cmd(0x80);
+  91          //////    delay_ms();
+  92          //////}
+  93          
+  94          //////int main() {
+  95          //////  text = 0x00;  
+  96          //////    lcd_init();  
+  97          //////    
+  98          //////    lcd_data('Z');
+  99          //////    delay_ms(); 
+ 100          
+ 101          //////    lcd_data('U');
+ 102          //////    delay_ms();
+ 103          
+ 104          //////    lcd_data('N');
+ 105          //////    delay_ms();     
+ 106          
+ 107          //////    lcd_data('0');
+ 108          //////    delay_ms();
+ 109          
+ 110          //////    lcd_data('R');
+ 111          //////    delay_ms();
+ 112          
+ 113          //////    lcd_data('A');
+ 114          //////    delay_ms();      
+ 115          
+ 116          //////    lcd_data('I');
+C51 COMPILER V9.60.7.0   T_14_4                                                            09/23/2024 16:25:13 PAGE 3   
+
+ 117          //////    delay_ms();  
+ 118          
+ 119          //////    lcd_data('N');
+ 120          //////    delay_ms();  
+ 121          //////    
+ 122          ////////    lcd_data('I');
+ 123          ////////    delay_ms();   
+ 124          ////////    
+ 125          ////////    lcd_data('N');
+ 126          ////////    delay_ms();
+ 127          //////    
+ 128          //////    return 0;
+ 129          //////}
+ 130          
+ 131          
+ 132          
+ 133          
+ 134          
+ 135          
+ 136          
+ 137          //--------------------------------------------------------------------------------------------------------
+             ------------------------
+ 138          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     97    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

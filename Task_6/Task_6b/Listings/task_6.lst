@@ -1,0 +1,49 @@
+C51 COMPILER V9.60.7.0   TASK_6                                                            09/20/2024 11:30:18 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_6
+OBJECT MODULE PLACED IN .\Objects\task_6.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_6.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk_6.lst) TABS(2) OBJECT(.\Objects\task_6.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          sbit led=P2^0;
+   3          sbit switch1=P3^1;
+   4          
+   5          void MSDelay(unsigned int);
+   6          
+   7          
+   8          void main()
+   9          {
+  10   1        while(1)
+  11   1        {
+  12   2          if(switch1==0)
+  13   2          {
+  14   3            led=~led;
+  15   3            MSDelay(250);
+  16   3          }
+  17   2        }
+  18   1      }
+  19          
+  20          
+  21          void MSDelay(unsigned int itime) {
+  22   1          unsigned int i, j;
+  23   1          for(i = 0; i < itime; i++)
+  24   1              for(j = 0; j<114; j++);
+  25   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     46    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

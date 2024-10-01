@@ -1,0 +1,4 @@
+".\Objects\task_3b.obj" 
+TO ".\Objects\task_3b" 
+PRINT(".\Listings\task_3b.m51") RAMSIZE(256) 
+CODE( 0X0000-0X1FFF )

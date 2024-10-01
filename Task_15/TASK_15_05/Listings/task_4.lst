@@ -1,0 +1,111 @@
+C51 COMPILER V9.60.7.0   TASK_4                                                            09/24/2024 12:33:01 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_4
+OBJECT MODULE PLACED IN .\Objects\task_4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk_4.lst) TABS(2) OBJECT(.\Objects\task_4.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "lcd.h"
+   3          
+   4          // Function to initialize the UART
+   5          void UART_Init() {
+   6   1          TMOD = 0x20;  // Timer 1, Mode 2 (8-bit auto-reload)
+   7   1          TH1 = 0xFD;   // Baud rate of 9600 for 11.0592 MHz clock
+   8   1          SCON = 0x50;  // Mode 1, 8-bit UART, enable receiver
+   9   1          TR1 = 1;      // Start Timer 1
+  10   1      }
+  11          
+  12          // Function to receive data via UART
+  13          unsigned char RX_data(void) {
+  14   1          unsigned char a;
+  15   1          while (RI == 0);  // Wait until reception is complete
+  16   1          RI = 0;           // Clear the reception interrupt flag
+  17   1          a = SBUF;         // Read received data
+  18   1          return a;
+  19   1      }
+  20          
+  21          // Function to send data via UART
+  22          void UART_Send(unsigned char dat) {
+  23   1          SBUF = dat;       // Load data into the UART buffer
+  24   1          while (TI == 0);  // Wait until transmission is complete
+  25   1          TI = 0;           // Clear the transmission interrupt flag
+  26   1      }
+  27          
+  28          // Function to display time on the LCD
+  29          void display_time(unsigned char hour, unsigned char minute, unsigned char second) {
+  30   1          lcd_cmd(0x80);  // Move to the first line
+  31   1          show("Time: ");
+  32   1          show_char(hour / 10 + '0');   // Display tens place of hour
+  33   1          show_char(hour % 10 + '0');   // Display unit place of hour
+  34   1          show_char(':');
+  35   1          show_char(minute / 10 + '0'); // Display tens place of minute
+  36   1          show_char(minute % 10 + '0'); // Display unit place of minute
+  37   1          show_char(':');
+  38   1          show_char(second / 10 + '0'); // Display tens place of second
+  39   1          show_char(second % 10 + '0'); // Display unit place of second
+  40   1      }
+  41          
+  42          // Function to display date on the LCD
+  43          void display_date(unsigned char day, unsigned char month, unsigned char year) {
+  44   1          lcd_cmd(0xC0);  // Move to the second line
+  45   1          show("Date: ");
+  46   1          show_char(day / 10 + '0');   // Display tens place of day
+  47   1          show_char(day % 10 + '0');   // Display unit place of day
+  48   1          show_char('/');
+  49   1          show_char(month / 10 + '0'); // Display tens place of month
+  50   1          show_char(month % 10 + '0'); // Display unit place of month
+  51   1          show_char('/');
+  52   1          show_char(year / 10 + '0');  // Display tens place of year
+  53   1          show_char(year % 10 + '0');  // Display unit place of year
+  54   1      }
+C51 COMPILER V9.60.7.0   TASK_4                                                            09/24/2024 12:33:01 PAGE 2   
+
+  55          
+  56          // Function to send the date via UART
+  57          void send_date(unsigned char day, unsigned char month, unsigned char year) {
+  58   1          UART_Send(day / 10 + '0');
+  59   1          UART_Send(day % 10 + '0');
+  60   1          UART_Send('/');
+  61   1          UART_Send(month / 10 + '0');
+  62   1          UART_Send(month % 10 + '0');
+  63   1          UART_Send('/');
+  64   1          UART_Send(year / 10 + '0');
+  65   1          UART_Send(year % 10 + '0');
+  66   1          UART_Send('\n'); // Newline for better formatting in serial output
+  67   1      }
+  68          
+  69          void main() {
+  70   1          unsigned char hour = 12, minute = 34, second = 56;
+  71   1          unsigned char day = 8, month = 8, year = 24;
+  72   1          
+  73   1          lcd_init();      // Initialize the LCD
+  74   1          UART_Init();     // Initialize UART
+  75   1          
+  76   1          while (1) {
+  77   2              display_time(hour, minute, second); // Display time on the LCD
+  78   2              display_date(day, month, year);     // Display date on the LCD
+  79   2              send_date(day, month, year);        // Send date via UART continuosly
+  80   2      
+  81   2              // Update the time here if necessary (for example, increment seconds)
+  82   2              // Simulate a delay for updating the time every second
+  83   2              lcd_delay();
+  84   2          }
+  85   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    371    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

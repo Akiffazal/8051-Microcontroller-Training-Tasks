@@ -1,0 +1,141 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/23/2024  12:27:54  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Task_12_5.obj TO .\Objects\Task_12_5 PRINT (.\Listings\Task_12_5.m51) RAMSIZE (256
+>> )
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Task_12_5.obj (TASK_12_5)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\Task_12_5 (TASK_12_5)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?TASK_12_5
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0005H     UNIT         ?C_INITSEG
+                    0008H     0003H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     008CH     UNIT         ?C_C51STARTUP
+            CODE    009AH     0087H     UNIT         ?PR?TIMER0_ISR?TASK_12_5
+            CODE    0121H     0010H     UNIT         ?PR?MAIN?TASK_12_5
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Task_12_5 (TASK_12_5)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_12_5
+  +--> ?C_INITSEG
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Task_12_5 (TASK_12_5)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_12_5
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:00A8H         PUBLIC        IE
+  B:00A0H.2       PUBLIC        SEG_PORT_1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/23/2024  12:27:54  PAGE 2
+
+
+  B:00A0H.3       PUBLIC        SEG_PORT_2
+  B:00A0H.4       PUBLIC        SEG_PORT_3
+  C:009AH         PUBLIC        timer0_ISR
+  C:0121H         PUBLIC        main
+  D:0008H         PUBLIC        count
+  D:0089H         PUBLIC        TMOD
+  B:00A0H.0       PUBLIC        led
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          TIMER0_ISR
+  C:009AH         LINE#         11
+  C:009CH         LINE#         13
+  C:009FH         LINE#         14
+  C:00A2H         LINE#         17
+  C:00AAH         LINE#         18
+  C:00B0H         LINE#         19
+  C:00B2H         LINE#         20
+  C:00B4H         LINE#         21
+  C:00B6H         LINE#         23
+  C:00B8H         LINE#         24
+  C:00B8H         LINE#         25
+  C:00C0H         LINE#         26
+  C:00C2H         LINE#         27
+  C:00C4H         LINE#         28
+  C:00C6H         LINE#         29
+  C:00C6H         LINE#         30
+  C:00CEH         LINE#         31
+  C:00D0H         LINE#         32
+  C:00D2H         LINE#         33
+  C:00D4H         LINE#         34
+  C:00D4H         LINE#         35
+  C:00DCH         LINE#         36
+  C:00DEH         LINE#         37
+  C:00E0H         LINE#         38
+  C:00E2H         LINE#         39
+  C:00E2H         LINE#         40
+  C:00EAH         LINE#         41
+  C:00ECH         LINE#         42
+  C:00EEH         LINE#         43
+  C:00F0H         LINE#         44
+  C:00F0H         LINE#         45
+  C:00F8H         LINE#         46
+  C:00FAH         LINE#         47
+  C:00FCH         LINE#         48
+  C:00FEH         LINE#         49
+  C:00FEH         LINE#         50
+  C:0106H         LINE#         51
+  C:0108H         LINE#         52
+  C:010AH         LINE#         53
+  C:010CH         LINE#         54
+  C:010CH         LINE#         55
+  C:0114H         LINE#         56
+  C:0116H         LINE#         57
+  C:0118H         LINE#         58
+  C:011AH         LINE#         60
+  C:011EH         LINE#         61
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/23/2024  12:27:54  PAGE 3
+
+
+  C:011EH         LINE#         62
+  -------         ENDPROC       TIMER0_ISR
+  -------         PROC          MAIN
+  C:0121H         LINE#         64
+  C:0121H         LINE#         65
+  C:0121H         LINE#         66
+  C:0124H         LINE#         67
+  C:0127H         LINE#         68
+  C:012AH         LINE#         69
+  C:012DH         LINE#         70
+  C:012FH         LINE#         72
+  C:012FH         LINE#         73
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        TASK_12_5
+
+Program Size: data=11.0 xdata=0 code=302
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

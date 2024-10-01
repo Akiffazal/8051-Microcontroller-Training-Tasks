@@ -1,0 +1,76 @@
+C51 COMPILER V9.60.7.0   TASK_10                                                           09/23/2024 10:45:02 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_10
+OBJECT MODULE PLACED IN .\Objects\task_10.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_10.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\t
+                    -ask_10.lst) TABS(2) OBJECT(.\Objects\task_10.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit led_1 = P2^0;
+   4          sbit led_2 = P2^1;
+   5          sbit led_3 = P2^2;
+   6          
+   7          unsigned int cntr_10ms =0;
+   8          unsigned int cntr_100ms = 0; 
+   9          unsigned int cntr_1000ms = 0;
+  10          
+  11          void Timer_0() interrupt 1 {
+  12   1        
+  13   1        cntr_10ms++;
+  14   1        
+  15   1        if(cntr_10ms==401)
+  16   1          {
+  17   2            led_1=~led_1;
+  18   2            cntr_100ms++;
+  19   2            cntr_10ms=0;
+  20   2          
+  21   2                if(cntr_100ms==10)
+  22   2                  {
+  23   3                    led_2=~led_2;
+  24   3                    cntr_1000ms++;
+  25   3                    cntr_100ms=0;
+  26   3                  
+  27   3      
+  28   3                        if(cntr_1000ms==10)
+  29   3                          {
+  30   4                            led_3=~led_3;
+  31   4                            cntr_1000ms=0;
+  32   4                          }                 
+  33   3                  }       
+  34   2          }     
+  35   1                              
+  36   1      }
+  37          
+  38          
+  39          void main() {
+  40   1      
+  41   1        IE = 0x82;           // Enable Timer 0 interrupt
+  42   1        TMOD = 0x02;         // Set Timer 0 mode to 8-bit auto reload
+  43   1        TH0 = -23;           // Set initial value for Timer 0 high byte
+  44   1        TR0=1;
+  45   1        while(1)
+  46   1        {
+  47   2        }
+  48   1      }
+  49          
+  50          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     86    ----
+C51 COMPILER V9.60.7.0   TASK_10                                                           09/23/2024 10:45:02 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

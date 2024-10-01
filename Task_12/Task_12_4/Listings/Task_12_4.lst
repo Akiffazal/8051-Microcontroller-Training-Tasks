@@ -1,0 +1,99 @@
+C51 COMPILER V9.60.7.0   TASK_12_4                                                         09/23/2024 12:13:53 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_12_4
+OBJECT MODULE PLACED IN .\Objects\Task_12_4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Task_12_4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\Task_12_4.lst) TABS(2) OBJECT(.\Objects\Task_12_4.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit SEG_PORT_1 = P2^2;
+   4          sbit SEG_PORT_2 = P2^3;
+   5          sbit SEG_PORT_3 = P2^4;
+   6          
+   7          unsigned int count = 0; // Corrected the colon to a semicolon
+   8          
+   9          void Tmr0_int() interrupt 1 {
+  10   1          count++;
+  11   1          if (count == 36) {
+  12   2              SEG_PORT_1 = 0;
+  13   2              SEG_PORT_2 = 0;
+  14   2              SEG_PORT_3 = 0;
+  15   2          } 
+  16   1         if (count == 72) {
+  17   2              SEG_PORT_1 = 1;
+  18   2              SEG_PORT_2 = 0;
+  19   2              SEG_PORT_3 = 0;
+  20   2          } 
+  21   1         if (count == 108) {
+  22   2              SEG_PORT_1 = 0;
+  23   2              SEG_PORT_2 = 1;
+  24   2              SEG_PORT_3 = 0;
+  25   2          } 
+  26   1         if (count == 144) {
+  27   2              SEG_PORT_1 = 1;
+  28   2              SEG_PORT_2 = 1;
+  29   2              SEG_PORT_3 = 0;
+  30   2          } 
+  31   1         if (count == 180) {
+  32   2              SEG_PORT_1 = 0;
+  33   2              SEG_PORT_2 = 0;
+  34   2              SEG_PORT_3 = 1;
+  35   2          } 
+  36   1         if (count == 216) {
+  37   2              SEG_PORT_1 = 1;
+  38   2              SEG_PORT_2 = 0;
+  39   2              SEG_PORT_3 = 1;
+  40   2          } 
+  41   1         if (count == 252) {
+  42   2              SEG_PORT_1 = 0;
+  43   2              SEG_PORT_2 = 1;
+  44   2              SEG_PORT_3 = 1;
+  45   2          } 
+  46   1         if (count == 288) {
+  47   2              SEG_PORT_1 = 1;
+  48   2              SEG_PORT_2 = 1;
+  49   2              SEG_PORT_3 = 1;
+  50   2      
+  51   2              count = 0;
+  52   2          }
+  53   1      }
+  54          
+C51 COMPILER V9.60.7.0   TASK_12_4                                                         09/23/2024 12:13:53 PAGE 2   
+
+  55          void main() {
+  56   1          IE = 0x82;
+  57   1          TMOD = 0x02;
+  58   1          TH0 = 0x00;
+  59   1          TR0 = 1;
+  60   1      
+  61   1          while(1){
+  62   2          
+  63   2          }
+  64   1      }
+  65          
+  66          
+  67          
+  68          
+  69          
+  70          
+  71          
+  72          
+  73          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    148    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

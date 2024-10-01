@@ -1,0 +1,96 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/20/2024  11:06:57  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task_5.obj TO .\Objects\task_5 PRINT (.\Listings\task_5.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task_5.obj (TASK_5)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\task_5 (TASK_5)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?TASK_5
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0020H     UNIT         ?PR?_MSDELAY?TASK_5
+            CODE    00AFH     000EH     UNIT         ?PR?MAIN?TASK_5
+            CODE    00BDH     0005H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\task_5 (TASK_5)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_5
+  +--> ?C_INITSEG
+
+?PR?MAIN?TASK_5
+  +--> ?PR?_MSDELAY?TASK_5
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\task_5 (TASK_5)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_5
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  C:008FH         PUBLIC        _MSDelay
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  11:06:57  PAGE 2
+
+
+  C:00AFH         PUBLIC        main
+  B:00B0H.1       PUBLIC        switch1
+  B:00A0H.0       PUBLIC        led1
+  D:0008H         PUBLIC        x
+  -------         PROC          MAIN
+  C:00AFH         LINE#         8
+  C:00AFH         LINE#         9
+  C:00AFH         LINE#         10
+  C:00AFH         LINE#         11
+  C:00AFH         LINE#         12
+  C:00B2H         LINE#         13
+  C:00B2H         LINE#         14
+  C:00B4H         LINE#         15
+  C:00BBH         LINE#         16
+  C:00BBH         LINE#         17
+  -------         ENDPROC       MAIN
+  -------         PROC          _MSDELAY
+  D:0006H         SYMBOL        itime
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:008FH         LINE#         21
+  C:008FH         LINE#         22
+  C:008FH         LINE#         24
+  C:0099H         LINE#         25
+  C:00AEH         LINE#         26
+  -------         ENDPROC       _MSDELAY
+  -------         ENDMOD        TASK_5
+
+Program Size: data=11.0 xdata=0 code=194
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

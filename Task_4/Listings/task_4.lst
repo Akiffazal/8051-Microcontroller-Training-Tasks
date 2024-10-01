@@ -1,0 +1,48 @@
+C51 COMPILER V9.60.7.0   TASK_4                                                            09/20/2024 10:54:12 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_4
+OBJECT MODULE PLACED IN .\Objects\task_4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk_4.lst) TABS(2) OBJECT(.\Objects\task_4.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          #define Port2 P2
+   4          
+   5          void MSDelay(unsigned int);
+   6          
+   7          void main(){
+   8   1        while(1)
+   9   1        {
+  10   2          Port2 = 0xAA;
+  11   2          MSDelay(500);
+  12   2          
+  13   2          Port2 = 0x55;
+  14   2          MSDelay(500);
+  15   2        }
+  16   1      }
+  17            
+  18          
+  19          void MSdelay(unsigned int itime)
+  20          {
+  21   1        unsigned int i,j;
+  22   1          for(i=0;i<itime;i++)
+  23   1          for(j=0;j<114;j++);
+  24   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     54    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

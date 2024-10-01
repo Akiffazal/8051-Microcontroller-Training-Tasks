@@ -1,0 +1,100 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 11:13:05 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\lcd.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lcd.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\lcd.l
+                    -st) TABS(2) OBJECT(.\Objects\lcd.obj)
+
+line level    source
+
+   1          #include "lcd.h"
+   2          
+   3          // Delay function to create a short delay
+   4          void lcd_delay() {
+   5   1          unsigned int i;
+   6   1          for (i = 0; i <= 30; i++);
+   7   1      }
+   8          
+   9          // Function to send a command to the LCD
+  10          void lcd_cmd(unsigned char cmd) {
+  11   1          text = cmd;    // Put the command on the data port
+  12   1          rs = 0;        // Select command register (RS=0)
+  13   1          rw = 0;        // Select write operation (RW=0)
+  14   1          en = 1;        // Generate a high-to-low pulse on the enable pin
+  15   1          lcd_delay();   // Wait for the command to be processed
+  16   1          en = 0;        // End the enable pulse
+  17   1      }
+  18          
+  19          // Function to send data to the LCD
+  20          void lcd_data(unsigned char dat) {
+  21   1          text = dat;    // Put the data on the data port
+  22   1          rs = 1;        // Select data register (RS=1)
+  23   1          rw = 0;        // Select write operation (RW=0)
+  24   1          en = 1;        // Generate a high-to-low pulse on the enable pin
+  25   1          lcd_delay();   // Wait for the data to be processed
+  26   1          en = 0;        // End the enable pulse
+  27   1      }
+  28          
+  29          //void show(unsigned char *s) {
+  30          //    while (*s) {
+  31          //        lcd_data(*s++);
+  32          //    }
+  33          //}
+  34          
+  35          
+  36          // Function to display a single character on the LCD
+  37          void show_char(unsigned char c) {
+  38   1          lcd_data(c);
+  39   1      }
+  40          
+  41          // Function to initialize the LCD
+  42          void lcd_init() {
+  43   1          lcd_cmd(0x38); // Set LCD to 8-bit mode, 2 lines, 5x7 matrix
+  44   1          lcd_delay();   // Wait for the command to be processed
+  45   1          lcd_cmd(0x0C); // Display ON, cursor OFF
+  46   1          lcd_delay();   // Wait for the command to be processed
+  47   1          lcd_cmd(0x06); // Entry mode, auto increment with no shift
+  48   1          lcd_delay();   // Wait for the command to be processed
+  49   1          lcd_cmd(0x01); // Clear the display
+  50   1          lcd_delay();   // Wait for the command to be processed
+  51   1      }
+  52          
+  53          //// Function to set the cursor position
+  54          //void lcd_set_cursor(unsigned char row, unsigned char col) {
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 11:13:05 PAGE 2   
+
+  55          //    unsigned char pos;
+  56          //    if (row == 0)
+  57          //        pos = 0x80 + col; // Set cursor position for the first line
+  58          //    else if (row == 1)
+  59          //        pos = 0xC0 + col; // Set cursor position for the second line
+  60          //    lcd_cmd(pos); // Send command to set the cursor position
+  61          //}
+  62          
+  63          //// Function to write data at a specific position
+  64          //void lcd_write(unsigned char row, unsigned char col, unsigned char dat) {
+  65          //    lcd_set_cursor(row, col); // Set cursor to specified position
+  66          //    lcd_data(dat);            // Write data at that position
+  67          //}
+  68          
+  69          // Function to clear the display
+  70          //void lcd_clear() {
+  71          //    lcd_cmd(0x01); // Clear display screen
+  72          //    lcd_delay();   // Wait for the command to be processed
+  73          //}
+  74          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     75    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

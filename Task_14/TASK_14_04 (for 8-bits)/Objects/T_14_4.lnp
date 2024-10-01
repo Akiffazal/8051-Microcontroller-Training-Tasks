@@ -1,0 +1,4 @@
+".\Objects\T_14_4.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\T_14_4" 
+PRINT(".\Listings\T_14_4.m51") RAMSIZE(256) 

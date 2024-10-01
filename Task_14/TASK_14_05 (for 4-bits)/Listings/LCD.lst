@@ -1,0 +1,98 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/23/2024 16:41:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          #include "LCD.h"
+   2          
+   3          // Delay function to create a short delay
+   4          void delay() {
+   5   1          int i, j;
+   6   1          for(i = 0; i < 50; i++) {        
+   7   2              for (j = 0; j < 70; j++);     
+   8   2          }
+   9   1      }
+  10          
+  11          // Define lcd_delay function to create a delay for LCD timing
+  12          void lcd_delay() {
+  13   1          delay();                          // Call the delay function
+  14   1      }
+  15          
+  16          // Function to send a nibble (4 bits) to the LCD
+  17          void lcd_send_nibble(unsigned char nibble) {
+  18   1          text = (nibble & 0xF0);           // Send the higher nibble to the data port
+  19   1          en = 1;                           // Generate a high-to-low pulse on the enable pin
+  20   1          lcd_delay();                      // Wait for the nibble to be processed
+  21   1          en = 0;                           // End the enable pulse
+  22   1      }
+  23          
+  24          // Function to send a command to the LCD
+  25          void lcd_cmd(unsigned char cmd) {
+  26   1          rs = 0;                           // Select command register (RS=0)
+  27   1          rw = 0;                           // Select write operation (RW=0)
+  28   1          lcd_send_nibble(cmd);             // Send the higher nibble
+  29   1          lcd_send_nibble(cmd << 4);        // Send the lower nibble
+  30   1      }
+  31          
+  32          // Function to send data to the LCD
+  33          void lcd_data(unsigned char dat) {
+  34   1          rs = 1;                          // Select data register (RS=1)
+  35   1          rw = 0;                          // Select write operation (RW=0)
+  36   1          lcd_send_nibble(dat);            // Send the higher nibble
+  37   1          lcd_send_nibble(dat << 4);       // Send the lower nibble
+  38   1      }
+  39          
+  40          // Function to initialize the LCD
+  41          void lcd_init() {
+  42   1          lcd_cmd(0x28);                  // Set LCD to 4-bit mode, 2 lines, 5x7 matrix
+  43   1          lcd_delay();                    // Wait for the command to be processed
+  44   1          lcd_cmd(0x0C);                  // Display ON, cursor OFF
+  45   1          lcd_delay();                    // Wait for the command to be processed
+  46   1          lcd_cmd(0x06);                  // Entry mode, auto increment with no shift
+  47   1          lcd_delay();                    // Wait for the command to be processed
+  48   1          lcd_cmd(0x01);                  // Clear the display
+  49   1          lcd_delay();                    // Wait for the command to be processed
+  50   1      }
+  51          
+  52          // Function to set the cursor position
+  53          void lcd_set_cursor(unsigned char row, unsigned char col) {
+  54   1          unsigned char pos;
+C51 COMPILER V9.60.7.0   LCD                                                               09/23/2024 16:41:46 PAGE 2   
+
+  55   1          if (row == 0)
+  56   1              pos = 0x80 + col;          // Set cursor position for the first line
+  57   1          else if (row == 1)
+  58   1              pos = 0xC0 + col;          // Set cursor position for the second line
+  59   1          lcd_cmd(pos);                  // Send command to set the cursor position
+  60   1      }
+  61          
+  62          // Function to write data at a specific position
+  63          void lcd_write(unsigned char row, unsigned char col, unsigned char dat) {
+  64   1          lcd_set_cursor(row, col);     // Set cursor to specified position
+  65   1          lcd_data(dat);                // Write data at that position
+  66   1      }
+  67          
+  68          // Function to clear the display
+  69          void lcd_clear() {
+  70   1          lcd_cmd(0x01);               // Clear display screen
+  71   1          lcd_delay();                 // Wait for the command to be processed
+  72   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    147    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

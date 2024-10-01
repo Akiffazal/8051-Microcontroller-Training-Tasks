@@ -1,0 +1,51 @@
+C51 COMPILER V9.60.7.0   TASK_14_5_MAIN                                                    09/23/2024 16:41:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_14_5_MAIN
+OBJECT MODULE PLACED IN .\Objects\Task_14_5_main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Task_14_5_main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Lis
+                    -tings\Task_14_5_main.lst) TABS(2) OBJECT(.\Objects\Task_14_5_main.obj)
+
+line level    source
+
+   1          #include <reg51.h> 
+   2          #include "LCD.h" // Include the LCD header file
+   3          
+   4          int main() {
+   5   1          
+   6   1          while(1){
+   7   2          lcd_init();    // Initialize the LCD
+   8   2          lcd_clear(); // Clear the LCD
+   9   2      
+  10   2          // Example usage
+  11   2          lcd_write(0, 0, 'A');
+  12   2          lcd_write(0, 1, 'K');
+  13   2          lcd_write(0, 2, 'I');
+  14   2          lcd_write(0, 3, 'F');
+  15   2            
+  16   2            
+  17   2          lcd_set_cursor(1, 0);  // Set cursor to the beginning of the second line
+  18   2          lcd_write(1, 0, 'W');  // Write 'W' at the beginning of the second line
+  19   2          lcd_write(1, 1, 'o');  // Write 'o' at the second position of the second line
+  20   2          lcd_write(1, 2, 'r');  // Write 'r' at the third position of the second line
+  21   2          lcd_write(1, 3, 'l');  // Write 'l' at the fourth position of the second line
+  22   2          lcd_write(1, 4, 'd');  // Write 'd' at the fifth position of the second line
+  23   2      
+  24   2          //    while(1); // Infinite loop to keep the microcontroller running
+  25   2          return 0;
+  26   2          }
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     97    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

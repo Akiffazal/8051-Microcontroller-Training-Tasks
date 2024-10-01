@@ -1,0 +1,96 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/20/2024  10:50:17  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\task_3b.obj TO .\Objects\task_3b PRINT (.\Listings\task_3b.m51) RAMSIZE (256) CODE
+>>  (0X0000-0X1FFF)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\task_3b.obj (TASK_3B)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\task_3b (TASK_3B)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0027H     UNIT         ?PR?_MSDELAY?TASK_3B
+            CODE    002AH     0017H     UNIT         ?PR?MAIN?TASK_3B
+            CODE    0041H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\task_3b (TASK_3B)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TASK_3B
+
+?PR?MAIN?TASK_3B
+  +--> ?PR?_MSDELAY?TASK_3B
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\task_3b (TASK_3B)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TASK_3B
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:000AH         PUBLIC        _MSDelay
+  C:002AH         PUBLIC        main
+  -------         PROC          MAIN
+  C:002AH         LINE#         16
+  C:002AH         LINE#         19
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/20/2024  10:50:17  PAGE 2
+
+
+  C:002AH         LINE#         20
+  C:002AH         LINE#         21
+  C:002DH         LINE#         22
+  C:0030H         LINE#         23
+  C:0033H         LINE#         25
+  C:0033H         LINE#         26
+  C:0036H         LINE#         29
+  C:0039H         LINE#         30
+  C:003CH         LINE#         32
+  C:003CH         LINE#         33
+  C:003FH         LINE#         35
+  -------         ENDPROC       MAIN
+  C:0006H         SYMBOL        L?0014
+  -------         PROC          L?0013
+  -------         ENDPROC       L?0013
+  C:0006H         SYMBOL        L?0014
+  -------         PROC          _MSDELAY
+  D:0006H         SYMBOL        itime
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:000AH         LINE#         39
+  C:000AH         LINE#         40
+  C:000AH         LINE#         42
+  C:0014H         LINE#         43
+  C:0029H         LINE#         44
+  -------         ENDPROC       _MSDELAY
+  -------         ENDMOD        TASK_3B
+
+Program Size: data=9.0 xdata=0 code=77
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

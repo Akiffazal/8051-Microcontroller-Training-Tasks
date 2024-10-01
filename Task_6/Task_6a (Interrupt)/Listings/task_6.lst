@@ -1,0 +1,90 @@
+C51 COMPILER V9.60.7.0   TASK_6                                                            09/20/2024 11:31:44 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_6
+OBJECT MODULE PLACED IN .\Objects\task_6.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE task_6.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ta
+                    -sk_6.lst) TABS(2) OBJECT(.\Objects\task_6.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          sbit led=P2^0;
+   3          
+   4          void MSDelay(unsigned int);
+   5          
+   6          
+   7          void external_int0() interrupt 0
+   8          {
+   9   1        led=~led;
+  10   1        MSDelay(250);
+  11   1        
+  12   1      }
+  13          
+  14          
+  15          void main()
+  16          {
+  17   1        IE=0x81;
+  18   1      }
+  19          
+  20          
+  21          void MSDelay(unsigned int itime) {
+  22   1          unsigned int i, j;
+  23   1          for(i = 0; i < itime; i++)
+  24   1              for(j = 0; j<114; j++);
+  25   1      }
+  26          
+  27          
+  28          
+  29          
+  30          
+  31          
+  32          
+  33          
+  34          //#include <reg51.h>
+  35          //sbit led=P2^0;
+  36          //sbit switch1=P3^2;
+  37          
+  38          //void MSDelay(unsigned int);
+  39          
+  40          
+  41          //void external_int0() interrupt 0
+  42          //{
+  43          //  if(switch1==0)
+  44          //  {
+  45          //    led=~led;
+  46          //    MSDelay(250);
+  47          //  }
+  48          //}
+  49          
+  50          
+  51          //void main()
+  52          //{
+  53          //  IE=0x81;
+  54          //  while(1)
+C51 COMPILER V9.60.7.0   TASK_6                                                            09/20/2024 11:31:44 PAGE 2   
+
+  55          //  {
+  56          //  }
+  57          //}
+  58          
+  59          
+  60          //void MSDelay(unsigned int itime) {
+  61          //    unsigned int i, j;
+  62          //    for(i = 0; i < itime; i++)
+  63          //        for(j = 0; j<114; j++);
+  64          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    101    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

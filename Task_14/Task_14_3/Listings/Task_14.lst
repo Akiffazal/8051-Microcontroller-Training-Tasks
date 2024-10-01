@@ -1,0 +1,42 @@
+C51 COMPILER V9.60.7.0   TASK_14                                                           09/23/2024 16:19:13 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TASK_14
+OBJECT MODULE PLACED IN .\Objects\Task_14.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Task_14.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\T
+                    -ask_14.lst) TABS(2) OBJECT(.\Objects\Task_14.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "header.h" // Include the header file
+   3          
+   4          int main()
+   5          {
+   6   1          unsigned int j;
+   7   1          lcd_init();                         // Initialize the LCD
+   8   1          while(1) {
+   9   2              cmd(0x83);                      // Set cursor position to the beginning of the first line
+  10   2              show("Welcome To ");            // Display the first line
+  11   2              cmd(0xc4);                      // Set cursor position to the beginning of the second line
+  12   2              show("Chip Soul");              // Display the second line
+  13   2              lcd_delay();                    // Delay to keep the message on the screen
+  14   2              cmd(0x01);                      // Clear the display
+  15   2              lcd_delay();     // Delay before the next iteration
+  16   2          }
+  17   1      }
+*** WARNING C280 IN LINE 6 OF Task_14.c: 'j': unreferenced local variable
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     44    ----
+   CONSTANT SIZE    =     22    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
