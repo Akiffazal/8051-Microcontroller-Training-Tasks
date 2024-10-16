@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\keypad.obj",
+".\Objects\lcd.obj",
+".\Objects\keypad_1.obj" 
+TO ".\Objects\Kepad_Interfacing" 
+PRINT(".\Listings\Kepad_Interfacing.m51") RAMSIZE(256) 

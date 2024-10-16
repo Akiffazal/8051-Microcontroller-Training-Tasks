@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\Calculator" 
+PRINT(".\Listings\Calculator.m51") RAMSIZE(256) 

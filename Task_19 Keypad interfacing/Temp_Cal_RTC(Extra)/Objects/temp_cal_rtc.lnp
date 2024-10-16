@@ -1,0 +1,6 @@
+".\Objects\calculator.obj",
+".\Objects\final_cal.obj",
+".\Objects\temperature.obj",
+".\Objects\time.obj" 
+TO ".\Objects\temp_cal_rtc" 
+PRINT(".\Listings\temp_cal_rtc.m51") RAMSIZE(256) 

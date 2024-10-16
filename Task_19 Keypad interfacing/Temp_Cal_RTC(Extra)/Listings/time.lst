@@ -1,0 +1,172 @@
+C51 COMPILER V9.60.7.0   TIME                                                              09/16/2024 10:33:07 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TIME
+OBJECT MODULE PLACED IN .\Objects\time.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE time.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\time
+                    -.lst) TABS(2) OBJECT(.\Objects\time.obj)
+
+line level    source
+
+   1          #include <reg51.h> 
+   2          #include "time.h"     
+   3          
+   4          
+   5           
+   6          #define dataport P0       // LCD dataport connected to PORT1
+   7          sbit rs = P2^6;  //RS pin connected to pin 2 of port 3
+   8          sbit rw = P2^5;  // RW pin connected to pin 3 of port 3
+   9          sbit en  =  P2^7;
+  10           
+  11           
+  12          /* 16x2 lcd Specification */
+  13          #define LCDMaxLines 2
+  14          #define LCDMaxChars 16
+  15          #define LineOne 0x80
+  16          #define LineTwo 0xc0
+  17           
+  18          #define BlankSpace ' '
+  19           
+  20          //LCD initilization
+  21          void LCDInit()
+  22          {
+  23   1          delay_us(5000);
+  24   1         
+  25   1        lcd_WriteCmd (0x38);  /* Initialization of 16X2 LCD in 8bit mode */
+  26   1        lcd_WriteCmd (0x0E);  /* Display ON Cursor blinking */
+  27   1        lcd_WriteCmd (0x06);  /* Auto Increment cursor */
+  28   1        lcd_WriteCmd (0x01);  /* clear display */
+  29   1        lcd_WriteCmd (0x80);  /* cursor at home position */
+  30   1       
+  31   1      }
+  32           
+  33           
+  34          // lcd Write command function
+  35          void lcd_WriteCmd( char a)
+  36          {
+  37   1       
+  38   1         dataport=a ;        
+  39   1      
+  40   1         rs=0;                    
+  41   1         rw=0;                    
+  42   1         en=1;                      
+  43   1         delay_us(1);
+  44   1         en=0;
+  45   1         delay_us(1);
+  46   1      }
+  47           
+  48           
+  49           // lcd writedata function
+  50          void lcd_Writedata( char a)
+  51          {
+  52   1       
+  53   1       
+  54   1         dataport=a ;
+C51 COMPILER V9.60.7.0   TIME                                                              09/16/2024 10:33:07 PAGE 2   
+
+  55   1           rs=1;                    
+  56   1           rw=0;                     
+  57   1           en=1;                      
+  58   1          delay_us(1);
+  59   1           en=0;
+  60   1       
+  61   1         delay_us(1);
+  62   1       
+  63   1      }
+  64          
+  65           
+  66           //lcd gotolinetwo fuction
+  67          void lcd_GoToLineTwo()
+  68          {
+  69   1         lcd_WriteCmd(LineTwo);   // move the Cursor to Second line First Position
+  70   1      }
+  71           
+  72           
+  73           
+  74          //lcd go to X(first row), Y(second row) line
+  75          void lcd_GoToXY(char row, char col)
+  76          {
+  77   1         char pos;
+  78   1       
+  79   1          if(row<LCDMaxLines)
+  80   1            {
+  81   2               pos= LineOne | (row << 6);
+  82   2                                          
+  83   2       
+  84   2              if(col<LCDMaxChars)
+  85   2                 pos= pos+col;            
+  86   2                                          
+  87   2       
+  88   2               lcd_WriteCmd(pos);        
+  89   2             }
+  90   1      }
+  91           
+  92          
+  93          //lcd display string function
+  94          void lcd_DisplayString(char *string_ptr)
+  95          {
+  96   1         while(*string_ptr)
+  97   1          lcd_Writedata(*string_ptr++);
+  98   1          }
+  99           
+ 100           
+ 101          //lcd display rtc time function
+ 102          void lcd_DisplayRtcTime(char hour,char min,char sec)
+ 103          {
+ 104   1        char t=0x01;
+ 105   1        if((hour&0x80)==0)
+ 106   1          t=0x03;
+ 107   1          lcd_Writedata(((hour>>4) & t) + 0x30);
+ 108   1          lcd_Writedata((hour & 0x0f) + 0x30);
+ 109   1          lcd_Writedata(':');
+ 110   1       
+ 111   1          lcd_Writedata(((min>>4) & 0x0f) + 0x30);
+ 112   1          lcd_Writedata((min & 0x0f) + 0x30);
+ 113   1          lcd_Writedata(':');
+ 114   1       
+ 115   1          lcd_Writedata(((sec>>4) & 0x0f) + 0x30);
+ 116   1          lcd_Writedata((sec & 0x0f) + 0x30);
+C51 COMPILER V9.60.7.0   TIME                                                              09/16/2024 10:33:07 PAGE 3   
+
+ 117   1       
+ 118   1       }
+ 119           
+ 120           
+ 121           // lcd display rtc date function
+ 122          void lcd_DisplayRtcDate(char day,char month,char year)
+ 123           {
+ 124   1           lcd_Writedata(((day>>4) & 0x0f) + 0x30);
+ 125   1           lcd_Writedata((day & 0x0f) + 0x30);
+ 126   1           lcd_Writedata('/');
+ 127   1       
+ 128   1           lcd_Writedata(((month>>4) & 0x0f) + 0x30);
+ 129   1           lcd_Writedata((month & 0x0f) + 0x30);
+ 130   1           lcd_Writedata('/');
+ 131   1       
+ 132   1           lcd_Writedata(((year>>4) & 0x0f) + 0x30);
+ 133   1           lcd_Writedata((year & 0x0f) + 0x30);
+ 134   1       
+ 135   1       }
+ 136          
+ 137           
+ 138          void delay_us(unsigned int us_count)
+ 139           {  
+ 140   1          while(us_count!=0)
+ 141   1            {
+ 142   2               us_count--;
+ 143   2             }
+ 144   1         }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    320    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

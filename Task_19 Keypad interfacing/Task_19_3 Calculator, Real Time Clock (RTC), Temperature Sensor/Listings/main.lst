@@ -1,0 +1,222 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/13/2024 11:05:34 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          //#include <reg51.h>
+   2          //#include "TEMP.h"
+   3          //#include "LCD.h"
+   4          //#include <string.h>
+   5          
+   6          
+   7          //sbit A= P2^2;
+   8          //sbit D= P2^3;
+   9          //sbit C= P2^4;
+  10          
+  11          //unsigned int index=0;
+  12          //unsigned char temp_lsb=0; temp_msb=0;
+  13          //unsigned char unit, ten, hundred, intpart, decpart;
+  14          //char temp_f;
+  15          //unsigned char temp_c;
+  16          //sbit DQ=P3^7;
+  17          //sbit buzzer_pin=P1^5;
+  18          
+  19          //void temp_serialdata_pc (void)
+  20          //{
+  21          //  SBUF=hundred;
+  22          //    while(TI==0);
+  23          //      TI=0;
+  24          //    delay(100);
+  25          //    
+  26          //      SBUF=ten;
+  27          //    while(TI==0);                     //  tempdata send to pc
+  28          //      TI=0;
+  29          //    delay(100);
+  30          //    
+  31          //      SBUF=unit;
+  32          //    while(TI==0);
+  33          //      TI=0;
+  34          //    delay(100);
+  35          //    
+  36          //  
+  37          //  SBUF='\n';
+  38          //    while(TI==0);
+  39          //      TI=0;
+  40          //    delay(100);
+  41          //} 
+  42          
+  43          
+  44          
+  45          
+  46          //void ow_reset (void)
+  47          //{
+  48          //  DQ=1;
+  49          //  delay_18B20(8);
+  50          //  DQ=0;
+  51          //  delay_18B20(65);
+  52          //  DQ=1;
+  53          //  delay_18B20(20);  
+  54          //}
+C51 COMPILER V9.60.7.0   MAIN                                                              09/13/2024 11:05:34 PAGE 2   
+
+  55          //void delay_18B20 (unsigned int ud)
+  56          //{
+  57          //  while(ud--);
+  58          //}
+  59          //unsigned char read_bytess (void)
+  60          //{
+  61          //  unsigned char i=0;
+  62          //  unsigned char dat=0;
+  63          //  for(i=8; i>0; i--)
+  64          //  {
+  65          //    DQ=0;
+  66          //    dat>>=1;
+  67          //    DQ=1;
+  68          //    if(DQ)
+  69          //    
+  70          //      dat |= 0x80;
+  71          //      delay_18B20(4);
+  72          //    
+  73          //  }
+  74          //  return(dat);
+  75          //}
+  76          //void write_bytess (char dat)
+  77          //{
+  78          //  unsigned char i=0;
+  79          //  for(i=8; i>0; i--)
+  80          //  {
+  81          //    DQ=0;
+  82          //    DQ=dat&0x01;
+  83          //    delay_18B20(5);
+  84          //    DQ=1;
+  85          //    dat>>=1;
+  86          //  
+  87          //  }
+  88          //}
+  89          //void read_temperature(void)
+  90          //{
+  91          //  ow_reset();
+  92          //  write_bytess(0xCC); // skip rom
+  93          //  write_bytess(0x44); //start conversion measure temp and convert into digital
+  94          //  delay_18B20(10);
+  95          //  ow_reset();
+  96          //  write_bytess(0xCC); // skip rom
+  97          //  write_bytess(0xBE);// read scratchpad memory
+  98          //  delay_18B20(10);
+  99          //  
+ 100          //  temp_msb=read_bytess();
+ 101          //  temp_lsb=read_bytess();
+ 102          //  
+ 103          //  temp_c=((temp_lsb*256+temp_msb)>>4);
+ 104          //  temp_f=(((int)temp_c)*9)/5+32;
+ 105          //}
+ 106          
+ 107          //void hex2lcd (unsigned char z)
+ 108          //{
+ 109          //  hundred=(z/100)+0x30;
+ 110          //  ten=(z%100/10)+0x30;
+ 111          //  unit=(z%10)+0x30;
+ 112          //  intpart=(int)z;
+ 113          //  decpart=(z-intpart)+0x30;
+ 114          //  
+ 115          //  lcd_char(hundred);
+ 116          //  lcd_char(ten);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/13/2024 11:05:34 PAGE 3   
+
+ 117          //  lcd_char(unit);
+ 118          //  lcd_string(".");
+ 119          //  lcd_char(decpart);
+ 120          //}
+ 121          //void timer0_interupt (void) interrupt 1   //50 ms
+ 122          //{
+ 123          //  index+=1;
+ 124          //  if(index==400)
+ 125          //  {
+ 126          //    lcd_command (0x80);
+ 127          //    lcd_string("TEMPERATURE IS:");
+ 128          //    
+ 129          //    lcd_command (0xC0);
+ 130          //    read_temperature();
+ 131          //    hex2lcd(temp_c);
+ 132          //    lcd_string("c");
+ 133          //    index=0;
+ 134          //  }   
+ 135          //  //display_num7_seg(temp_c);
+ 136          //  //values_on_ssd();
+ 137          //  
+ 138          //  if(temp_c>=37)
+ 139          //  {
+ 140          //    buzzer_pin=0;
+ 141          //    delay(2);
+ 142          //    buzzer_pin=1;
+ 143          //    delay(2);
+ 144          //  }
+ 145          //  buzzer_pin=1;
+ 146          //  TH0=0xFC;
+ 147          //  TL0=0x18;
+ 148          //}
+ 149          
+ 150          
+ 151          //  
+ 152          //  
+ 153          //void temperature_state ()
+ 154          //{ 
+ 155          //  
+ 156          //  A=1; D=1; C=1;
+ 157          //  P0=0xFF;
+ 158          //  A=1; D=1; C=0;
+ 159          //  P0=0x79;
+ 160          //  
+ 161          //  lcd_init();
+ 162          
+ 163          //  IE=0x82;
+ 164          //  //EA=1;
+ 165          //  //ET0=1;
+ 166          //  
+ 167          //  TMOD=0x21;
+ 168          //  SCON=0x50;                     
+ 169          //  TH1=0xFD;   // 9600
+ 170          //  TH0=0xFC;
+ 171          //  TL0=0x18;
+ 172          //  TR0=1;
+ 173          //  TR1=1;
+ 174          //  while(1)
+ 175          //  {
+ 176          //    
+ 177          //   temp_serialdata_pc ();
+ 178          //   // display_num_serial(temp_c);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/13/2024 11:05:34 PAGE 4   
+
+ 179          //    //serial_data();
+ 180          //  }
+ 181          //}
+ 182          
+ 183          
+ 184          
+ 185          
+ 186          
+ 187          
+ 188          
+ 189          
+ 190          
+ 191          
+ 192          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

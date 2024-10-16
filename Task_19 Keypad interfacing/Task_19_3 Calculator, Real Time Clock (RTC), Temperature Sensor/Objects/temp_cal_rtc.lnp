@@ -1,0 +1,9 @@
+".\Objects\main.obj",
+".\Objects\main (2).obj",
+".\Objects\CALCULATOR.obj",
+".\Objects\LCD.obj",
+".\Objects\7sd.obj",
+".\Objects\mainstate.obj",
+".\Objects\TEMP.obj" 
+TO ".\Objects\temp_cal_rtc" 
+PRINT(".\Listings\temp_cal_rtc.m51") RAMSIZE(256) 

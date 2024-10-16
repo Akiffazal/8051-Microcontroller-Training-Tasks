@@ -1,0 +1,589 @@
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CALCULATOR
+OBJECT MODULE PLACED IN .\Objects\CALCULATOR.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE CALCULATOR.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\CALCULATOR.lst) TABS(2) OBJECT(.\Objects\CALCULATOR.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "CALCULATOR.h"
+   4          
+   5          //unsigned int y , a=0; b=0;
+   6          //unsigned char operator ,flag =0;
+   7          
+   8          sbit r0 =P1^0;
+   9          sbit r1 =P1^1;
+  10          sbit r2 =P1^2;
+  11          sbit r3 =P1^3;
+  12          sbit c0 =P1^4;
+  13          sbit c1 =P1^5;
+  14          sbit c2 =P1^6;
+  15          sbit c3 =P1^7;
+  16          
+  17          char scan_key();
+  18          
+  19          int calculator_state(void)
+  20          {
+  21   1        unsigned int r=0;
+  22   1        int k2,k1;
+  23   1        char key, key1;
+  24   1        unsigned char ch2;
+  25   1      //  if(cal_flag==1)
+  26   1      //  {
+  27   1         lcd_set_cursor(0,0);
+  28   1        lcd_string("calculator:");
+  29   1        
+  30   1        key=scan_key();
+  31   1        k2=get_num(key);
+  32   1        lcd_set_cursor(1,0);
+  33   1        lcd_char(key);
+  34   1        
+  35   1        
+  36   1        ch2=scan_key();
+  37   1        lcd_set_cursor(1,1);
+  38   1        lcd_char(ch2);
+  39   1        
+  40   1        
+  41   1        key1=scan_key();
+  42   1        k1=get_num(key1);
+  43   1        lcd_set_cursor(1,2);
+  44   1        lcd_char(key1);
+  45   1        lcd_set_cursor(1,3);
+  46   1        lcd_string("=");
+  47   1        lcd_set_cursor(1,4);
+  48   1        
+  49   1        switch(ch2)
+  50   1        {
+  51   2          case '+':
+  52   2            disp_num(k1+k2);
+  53   2          break;
+  54   2          case '-':
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 2   
+
+  55   2            disp_num(k2-k1);
+  56   2          break;
+  57   2          case '*':
+  58   2            disp_num(k2*k1);
+  59   2          break;
+  60   2          case '/':
+  61   2            disp_num(k2/k1);
+  62   2          break;  
+  63   2        }
+  64   1        return 0;
+  65   1        while(scan_key()!=0);
+  66   1      
+  67   1      }
+  68          //}
+  69          char scan_key()
+  70          {
+  71   1        char keypressed='\0';
+  72   1      while(!(keypressed == '0'|| keypressed == '1'|| keypressed == '2'|| keypressed == '3'||
+  73   1              keypressed == '4'|| keypressed == '5'|| keypressed == '6'|| keypressed == '7'||
+  74   1              keypressed == '8'|| keypressed == '9'|| keypressed == '-'|| keypressed == '*'|| 
+  75   1              keypressed == '='|| keypressed == '+'|| keypressed == '/'|| keypressed == 'C' ))
+  76   1            {
+  77   2            r0=0; r1=1;r2=1;r3=1;
+  78   2        if(c0==0 && r0==0){keypressed='+';}
+  79   2        if(c1==0 && r0==0){keypressed='-';}
+  80   2        if(c2==0 && r0==0){keypressed='*';}
+  81   2        if(c3==0 && r0==0){keypressed='/';}
+  82   2          
+  83   2            r0=1; r1=0;r2=1;r3=1;
+  84   2        if(c0==0 && r1==0){keypressed='=';}
+  85   2        if(c1==0 && r1==0){keypressed='3';}
+  86   2        if(c2==0 && r1==0){keypressed='6';}
+  87   2        if(c3==0 && r1==0){keypressed='9';}
+  88   2        
+  89   2            r0=1; r1=1;r2=0;r3=1;
+  90   2        if(c0==0 && r2==0){keypressed='0';}
+  91   2        if(c1==0 && r2==0){keypressed='2';}
+  92   2        if(c2==0 && r2==0){keypressed='5';}
+  93   2        if(c3==0 && r2==0){keypressed='8';}
+  94   2          
+  95   2            r0=1; r1=1;r2=1;r3=0;
+  96   2        if(c0==0 && r3==0){keypressed='C';}
+  97   2        if(c1==0 && r3==0){keypressed='1';}
+  98   2        if(c2==0 && r3==0){keypressed='4';}
+  99   2        if(c3==0 && r3==0){keypressed='7';}
+ 100   2      }
+ 101   1            delay(1000);
+ 102   1        return keypressed;
+ 103   1      }
+ 104          int get_num (char ch)
+ 105          {
+ 106   1        switch(ch)
+ 107   1        {
+ 108   2          case '0': return 0; break;
+ 109   2          case '1': return 1; break;
+ 110   2          case '2': return 2; break;
+ 111   2          case '3': return 3; break;
+ 112   2          case '4': return 4; break;
+ 113   2          case '5': return 5; break;
+ 114   2          case '6': return 6; break;
+ 115   2          case '7': return 7; break;
+ 116   2          case '8': return 8; break;
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 3   
+
+ 117   2          case '9': return 9; break;
+ 118   2        }
+ 119   1        return 0;
+ 120   1      }
+ 121          void disp_num(float num)
+ 122          {
+ 123   1        unsigned char unitdigit =0;
+ 124   1        unsigned char tenthdigit =0;
+ 125   1        unsigned char decimal =0;
+ 126   1        int j;
+ 127   1        int numb;
+ 128   1         j=(int)(num*10);
+ 129   1           numb=(int)num;
+ 130   1         
+ 131   1        if(numb<0)
+ 132   1        {
+ 133   2          numb=-1*numb;
+ 134   2          lcd_char('-');
+ 135   2        }   
+ 136   1        tenthdigit=(numb/10);
+ 137   1        if(tenthdigit!=0)
+ 138   1        
+ 139   1          lcd_char(tenthdigit+0x30);
+ 140   1          unitdigit=numb - tenthdigit*10;
+ 141   1        lcd_char(unitdigit+0x30);
+ 142   1        lcd_char('.');
+ 143   1        decimal=(j%10)+0x30;
+ 144   1        lcd_char(decimal);
+ 145   1        delay(2000);
+ 146   1        
+ 147   1        
+ 148   1      }
+ 149          
+ 150          
+ 151          
+ 152          
+ 153          
+ 154          
+ 155          
+ 156          
+ 157          
+ 158          
+ 159          // another code 
+ 160          //char key='\0';
+ 161          //void row ()
+ 162          //{
+ 163          //  r1=0;r2=1;r3=1;r4=1;     //FOR ROW 1
+ 164          //  if(c1==0)
+ 165          //  {
+ 166          //    delay(30);
+ 167          //    while(c1==0)
+ 168          //    {
+ 169          //      lcd_char('7');
+ 170          //      if(flag==0)
+ 171          //      {
+ 172          //        a =a*10 +7;
+ 173          //      }
+ 174          //      else
+ 175          //      {
+ 176          //        b=b*10+7;
+ 177          //      }
+ 178          //    }
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 4   
+
+ 179          //  }
+ 180          //  
+ 181          //  
+ 182          //  
+ 183          //  if(c2==0)
+ 184          //  {
+ 185          //    delay(30);
+ 186          //    while(c2==0)
+ 187          //    {
+ 188          //      lcd_char('8');
+ 189          //      if(flag==0)
+ 190          //      {
+ 191          //        a=a*10 +8;
+ 192          //      }
+ 193          //      else
+ 194          //      {
+ 195          //        b=b*10 +8;
+ 196          //      }
+ 197          //    }
+ 198          //  }   
+ 199          //  
+ 200          //  if(c3==0)
+ 201          //  {
+ 202          //    delay(30);
+ 203          //    while(c3==0)
+ 204          //    {
+ 205          //    lcd_char ('9');
+ 206          //      if(flag==0)
+ 207          //      {
+ 208          //        a=a*10 +9;
+ 209          //      }
+ 210          //      else
+ 211          //      {
+ 212          //        b=b*10 +9;
+ 213          //      }
+ 214          //    }     
+ 215          //  }
+ 216          //  
+ 217          //  
+ 218          //  if(c4==0)
+ 219          //  {
+ 220          //    delay(30);
+ 221          //    while(c4==0)
+ 222          //    {
+ 223          //    lcd_char ('/');
+ 224          //      flag=1;
+ 225          //      operator='/';
+ 226          //    }     
+ 227          //  }
+ 228          //  
+ 229          //  r1=1;r2=0;r3=1;r4=1;    //FOR ROW 2
+ 230          //  
+ 231          //  if(c1==0)
+ 232          //  {
+ 233          //    delay(30);
+ 234          //    while(c1==0)
+ 235          //    {
+ 236          //      lcd_char('4');
+ 237          //      if(flag==0)
+ 238          //      {
+ 239          //        a=a*10 +4;
+ 240          //      }
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 5   
+
+ 241          //      else
+ 242          //      {
+ 243          //        b=b*10 +4;
+ 244          //      }
+ 245          //    }
+ 246          //  }
+ 247          //  
+ 248          //  
+ 249          //  if(c2==0)
+ 250          //  {
+ 251          //    delay(30);
+ 252          //    while(c2==0)
+ 253          //    {
+ 254          //      lcd_char('5');
+ 255          //      if(flag==0)
+ 256          //      {
+ 257          //        a=a*10 +5;
+ 258          //      }
+ 259          //      else
+ 260          //      {
+ 261          //        b=b*10 +5;
+ 262          //      }
+ 263          //    }
+ 264          //  }
+ 265          //  
+ 266          //  if(c3==0)
+ 267          //  {
+ 268          //    delay(30);
+ 269          //    while(c3==0)
+ 270          //    {
+ 271          //      lcd_char('6');
+ 272          //      if(flag==0)
+ 273          //      {
+ 274          //        a=a*10 +6;
+ 275          //      }
+ 276          //      else
+ 277          //      {
+ 278          //        b=b*10 +6;
+ 279          //      }
+ 280          //    }
+ 281          //  }
+ 282          //  
+ 283          //  if(c4==0)
+ 284          //  {
+ 285          //    delay(30);
+ 286          //    while(c4==0)
+ 287          //    {
+ 288          //      lcd_char('X');
+ 289          //      flag=1;
+ 290          //      operator='X';
+ 291          //    }
+ 292          //  }
+ 293          //  
+ 294          //  r1=1;r2=1;r3=0;r4=1; //for row 3
+ 295          //  if(c1==0)
+ 296          //  {
+ 297          //    delay(30);
+ 298          //    while(c1==0)
+ 299          //    {
+ 300          //      lcd_char('1');
+ 301          //      if(flag==0)
+ 302          //      {
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 6   
+
+ 303          //        a=a*10 +1;
+ 304          //      }
+ 305          //      else
+ 306          //      {
+ 307          //        b=b*10 +1;
+ 308          //      }
+ 309          //    }
+ 310          //  }
+ 311          //  
+ 312          //  if(c2==0)
+ 313          //  {
+ 314          //    delay(30);
+ 315          //    while(c2==0)
+ 316          //    {
+ 317          //      lcd_char('2');
+ 318          //      if(flag==0)
+ 319          //      {
+ 320          //        a=a*10 +2;
+ 321          //      }
+ 322          //      else
+ 323          //      {
+ 324          //        b=b*10 +2;
+ 325          //      }
+ 326          //    }
+ 327          //  }
+ 328          //  
+ 329          //  if(c3==0)
+ 330          //  {
+ 331          //    delay(30);
+ 332          //    while(c3==0)
+ 333          //    {
+ 334          //      lcd_char('3');
+ 335          //      if(flag==0)
+ 336          //      {
+ 337          //        a=a*10 +3;
+ 338          //      }
+ 339          //      else
+ 340          //      {
+ 341          //        b=b*10 +3;
+ 342          //      }
+ 343          //    }
+ 344          //  }
+ 345          //  
+ 346          //  if(c4==0)
+ 347          //  {
+ 348          //    delay(30);
+ 349          //    while(c4==0)
+ 350          //    {
+ 351          //      lcd_char('-');
+ 352          //    flag=1;
+ 353          //      operator='-';
+ 354          //      
+ 355          //    }
+ 356          //  }
+ 357          //  
+ 358          //  r1=1;r2=1;r3=1;r4=0;
+ 359          //  if(c1==0)
+ 360          //  {
+ 361          //    delay(30);
+ 362          //    while(c1==0)
+ 363          //    {
+ 364          //      lcd_command(0x01);
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 7   
+
+ 365          //      flag= a=b= 0;
+ 366          //      
+ 367          //    }
+ 368          //  }
+ 369          //  
+ 370          //  
+ 371          //    r1=1;r2=1;r3=1;r4=0;            // for state
+ 372          //  if(c1==0)
+ 373          //  {
+ 374          //    delay(30);
+ 375          //    while(c1==0)
+ 376          //    {
+ 377          //      lcd_char('C');  
+ 378          //      key='C';
+ 379          //    }
+ 380          //  }
+ 381          //  
+ 382          //  
+ 383          //  
+ 384          //  
+ 385          //  
+ 386          //  
+ 387          //  
+ 388          //  
+ 389          //  
+ 390          //  
+ 391          //  if(c2==0)
+ 392          //  {
+ 393          //    delay(30);
+ 394          //    while(c2==0)
+ 395          //    {
+ 396          //      lcd_char('0');
+ 397          //      if(flag==0)
+ 398          //      {
+ 399          //        a=a*10 +0;
+ 400          //      }
+ 401          //      else
+ 402          //      {
+ 403          //        b=b*10 +0;
+ 404          //      }
+ 405          //    }
+ 406          //  }
+ 407          //  
+ 408          //  if(c3==0)
+ 409          //  {
+ 410          //    delay(30);
+ 411          //    while(c3==0)
+ 412          //    {
+ 413          //      lcd_char('=');
+ 414          //      flag=1;
+ 415          //      calculate();
+ 416          //        
+ 417          //    
+ 418          //    }
+ 419          //  }
+ 420          //  if(c4==0)
+ 421          //  {
+ 422          //    delay(30);
+ 423          //    while(c4==0)
+ 424          //    {
+ 425          //      lcd_char('+');
+ 426          //      flag=1;
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 8   
+
+ 427          //      operator='+';
+ 428          //    }
+ 429          //  }
+ 430          //  
+ 431          //}
+ 432          
+ 433          //void calculate ()
+ 434          //{
+ 435          //  lcd_command(0xC0);
+ 436          //  if(operator=='+')
+ 437          //  {
+ 438          //    send_data(a+b);
+ 439          //  }
+ 440          //  if(operator=='-')
+ 441          //  {
+ 442          //    if(a>b)
+ 443          //    {
+ 444          //      send_data(a - b);
+ 445          //    }
+ 446          //    else if(a==b)
+ 447          //    {
+ 448          //      send_data(a-b);
+ 449          //    }
+ 450          //    else
+ 451          //    {
+ 452          //      lcd_char('-');
+ 453          //      send_data(b - a);
+ 454          //    }
+ 455          //  }
+ 456          //  if(operator=='/')
+ 457          //  {
+ 458          //    if(b != 0)
+ 459          //    {
+ 460          //      send_data(a/b);
+ 461          //    }
+ 462          //    else
+ 463          //    {
+ 464          //      lcd_command(0x01);
+ 465          //      lcd_string("ERROR");
+ 466          //    }
+ 467          //  }
+ 468          //  if(operator=='X')
+ 469          //  {
+ 470          //    send_data(a*b);
+ 471          //  }
+ 472          //}
+ 473          
+ 474          //void  send_data (unsigned int x)
+ 475          //{
+ 476          //  
+ 477          //  if(x>9999)
+ 478          //  {
+ 479          //    y=x/10000;
+ 480          //    lcd_char(y+0x30);
+ 481          //    x=x%10000;
+ 482          //    y=x/1000;
+ 483          //    lcd_char(y+0x30);
+ 484          //    x=x%1000;
+ 485          //    y=x/100;
+ 486          //    lcd_char(y+0x30);
+ 487          //    x=x%100;
+ 488          //    y=x/10;
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 9   
+
+ 489          //    lcd_char(y+0x30);
+ 490          //    y=x%10;
+ 491          //    lcd_char(y+0x30);
+ 492          //  }
+ 493          //  else if(x>999 && x<9999)
+ 494          //  {
+ 495          //    y=x/1000;
+ 496          //    lcd_char(y+0x30);
+ 497          //    x=x%1000;
+ 498          //    y=x/100;
+ 499          //    lcd_char(y+0x30);
+ 500          //    x=x%100;
+ 501          //    y=x/10;
+ 502          //    lcd_char(y+0x30);
+ 503          //    y=x%10;
+ 504          //    lcd_char(y+0x30);
+ 505          //  }
+ 506          //  else if(x>99 && x<999)
+ 507          //  {
+ 508          //    y=x/100;
+ 509          //    lcd_char(y+0x30);
+ 510          //    x=x%100;
+ 511          //    y=x/10;
+ 512          //    lcd_char(y+0x30);
+ 513          //    y=x%10;
+ 514          //    lcd_char(y+0x30);
+ 515          //  }
+ 516          //  else if(x>9 && x<99)
+ 517          //  {
+ 518          //    y=x/10;
+ 519          //    lcd_char(y+0x30);
+ 520          //    y=x%10;
+ 521          //    lcd_char(y+0x30);
+ 522          //  }
+ 523          //  else
+ 524          //  {
+ 525          //    lcd_char(x+0x30);
+ 526          //  }
+ 527          //}
+ 528          
+ 529          
+ 530          //void calculator_state ()
+ 531          //{
+ 532          //  lcd_init();
+ 533          //  lcd_command(0x80);
+ 534          //  lcd_string("simple");
+ 535          //  lcd_command(0xC0);
+ 536          //  lcd_string("calculator");
+ 537          //  delay(150);
+ 538          //  lcd_command(0x01);
+ 539          //  while(1)
+ 540          //  {
+ 541          //    row();
+ 542          //  }
+ 543          //}
+ 544          
+ 545            
+ 546          
+ 547          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/13/2024 11:05:34 PAGE 10  
+
+   CODE SIZE        =    791    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

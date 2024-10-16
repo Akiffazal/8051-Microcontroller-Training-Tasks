@@ -1,0 +1,420 @@
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CALCULATOR
+OBJECT MODULE PLACED IN .\Objects\CALCULATOR.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE CALCULATOR.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\CALCULATOR.lst) TABS(2) OBJECT(.\Objects\CALCULATOR.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "CALCULATOR.h"
+   4          
+   5          unsigned int y , a=0; b=0;
+   6          unsigned char operator ,flag =0;
+   7          
+   8          sbit r1 =P1^7;
+   9          sbit r2 =P1^6;
+  10          sbit r3 =P1^5;
+  11          sbit r4 =P1^4;
+  12          sbit c1 =P1^3;
+  13          sbit c2 =P1^2;
+  14          sbit c3 =P1^1;
+  15          sbit c4 =P1^0;
+  16          
+  17          void row ()
+  18          {
+  19   1        r1=0;r2=1;r3=1;r4=1;     //FOR ROW 1
+  20   1        if(c1==0)
+  21   1        {
+  22   2          delay(30);
+  23   2          while(c1==0)
+  24   2          {
+  25   3            lcd_char('7');
+  26   3            if(flag==0)
+  27   3            {
+  28   4              a =a*10 +7;
+  29   4            }
+  30   3            else
+  31   3            {
+  32   4              b=b*10+7;
+  33   4            }
+  34   3          }
+  35   2        }
+  36   1        
+  37   1        
+  38   1        
+  39   1        if(c2==0)
+  40   1        {
+  41   2          delay(30);
+  42   2          while(c2==0)
+  43   2          {
+  44   3            lcd_char('8');
+  45   3            if(flag==0)
+  46   3            {
+  47   4              a=a*10 +8;
+  48   4            }
+  49   3            else
+  50   3            {
+  51   4              b=b*10 +8;
+  52   4            }
+  53   3          }
+  54   2        }   
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 2   
+
+  55   1        
+  56   1        if(c3==0)
+  57   1        {
+  58   2          delay(30);
+  59   2          while(c3==0)
+  60   2          {
+  61   3          lcd_char ('9');
+  62   3            if(flag==0)
+  63   3            {
+  64   4              a=a*10 +9;
+  65   4            }
+  66   3            else
+  67   3            {
+  68   4              b=b*10 +9;
+  69   4            }
+  70   3          }     
+  71   2        }
+  72   1        
+  73   1        
+  74   1        if(c4==0)
+  75   1        {
+  76   2          delay(30);
+  77   2          while(c4==0)
+  78   2          {
+  79   3          lcd_char ('/');
+  80   3            flag=1;
+  81   3            operator='/';
+  82   3          }     
+  83   2        }
+  84   1        
+  85   1        r1=1;r2=0;r3=1;r4=1;    //FOR ROW 2
+  86   1        
+  87   1        if(c1==0)
+  88   1        {
+  89   2          delay(30);
+  90   2          while(c1==0)
+  91   2          {
+  92   3            lcd_char('4');
+  93   3            if(flag==0)
+  94   3            {
+  95   4              a=a*10 +4;
+  96   4            }
+  97   3            else
+  98   3            {
+  99   4              b=b*10 +4;
+ 100   4            }
+ 101   3          }
+ 102   2        }
+ 103   1        
+ 104   1        
+ 105   1        if(c2==0)
+ 106   1        {
+ 107   2          delay(30);
+ 108   2          while(c2==0)
+ 109   2          {
+ 110   3            lcd_char('5');
+ 111   3            if(flag==0)
+ 112   3            {
+ 113   4              a=a*10 +5;
+ 114   4            }
+ 115   3            else
+ 116   3            {
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 3   
+
+ 117   4              b=b*10 +5;
+ 118   4            }
+ 119   3          }
+ 120   2        }
+ 121   1        
+ 122   1        if(c3==0)
+ 123   1        {
+ 124   2          delay(30);
+ 125   2          while(c3==0)
+ 126   2          {
+ 127   3            lcd_char('6');
+ 128   3            if(flag==0)
+ 129   3            {
+ 130   4              a=a*10 +6;
+ 131   4            }
+ 132   3            else
+ 133   3            {
+ 134   4              b=b*10 +6;
+ 135   4            }
+ 136   3          }
+ 137   2        }
+ 138   1        
+ 139   1        if(c4==0)
+ 140   1        {
+ 141   2          delay(30);
+ 142   2          while(c4==0)
+ 143   2          {
+ 144   3            lcd_char('X');
+ 145   3            flag=1;
+ 146   3            operator='X';
+ 147   3          }
+ 148   2        }
+ 149   1        
+ 150   1        r1=1;r2=1;r3=0;r4=1; //for row 3
+ 151   1        if(c1==0)
+ 152   1        {
+ 153   2          delay(30);
+ 154   2          while(c1==0)
+ 155   2          {
+ 156   3            lcd_char('1');
+ 157   3            if(flag==0)
+ 158   3            {
+ 159   4              a=a*10 +1;
+ 160   4            }
+ 161   3            else
+ 162   3            {
+ 163   4              b=b*10 +1;
+ 164   4            }
+ 165   3          }
+ 166   2        }
+ 167   1        
+ 168   1        if(c2==0)
+ 169   1        {
+ 170   2          delay(30);
+ 171   2          while(c2==0)
+ 172   2          {
+ 173   3            lcd_char('2');
+ 174   3            if(flag==0)
+ 175   3            {
+ 176   4              a=a*10 +2;
+ 177   4            }
+ 178   3            else
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 4   
+
+ 179   3            {
+ 180   4              b=b*10 +2;
+ 181   4            }
+ 182   3          }
+ 183   2        }
+ 184   1        
+ 185   1        if(c3==0)
+ 186   1        {
+ 187   2          delay(30);
+ 188   2          while(c3==0)
+ 189   2          {
+ 190   3            lcd_char('3');
+ 191   3            if(flag==0)
+ 192   3            {
+ 193   4              a=a*10 +3;
+ 194   4            }
+ 195   3            else
+ 196   3            {
+ 197   4              b=b*10 +3;
+ 198   4            }
+ 199   3          }
+ 200   2        }
+ 201   1        
+ 202   1        if(c4==0)
+ 203   1        {
+ 204   2          delay(30);
+ 205   2          while(c4==0)
+ 206   2          {
+ 207   3            lcd_char('-');
+ 208   3          flag=1;
+ 209   3            operator='-';
+ 210   3            
+ 211   3          }
+ 212   2        }
+ 213   1        
+ 214   1        r1=1;r2=1;r3=1;r4=0;
+ 215   1        if(c1==0)
+ 216   1        {
+ 217   2          delay(30);
+ 218   2          while(c1==0)
+ 219   2          {
+ 220   3            lcd_command(0x01);
+ 221   3            flag= a=b= 0;
+ 222   3            
+ 223   3          }
+ 224   2        }
+ 225   1        if(c2==0)
+ 226   1        {
+ 227   2          delay(30);
+ 228   2          while(c2==0)
+ 229   2          {
+ 230   3            lcd_char('0');
+ 231   3            if(flag==0)
+ 232   3            {
+ 233   4              a=a*10 +0;
+ 234   4            }
+ 235   3            else
+ 236   3            {
+ 237   4              b=b*10 +0;
+ 238   4            }
+ 239   3          }
+ 240   2        }
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 5   
+
+ 241   1        
+ 242   1        if(c3==0)
+ 243   1        {
+ 244   2          delay(30);
+ 245   2          while(c3==0)
+ 246   2          {
+ 247   3            lcd_char('=');
+ 248   3            flag=1;
+ 249   3            calculate();
+ 250   3              
+ 251   3          
+ 252   3          }
+ 253   2        }
+ 254   1        if(c4==0)
+ 255   1        {
+ 256   2          delay(30);
+ 257   2          while(c4==0)
+ 258   2          {
+ 259   3            lcd_char('+');
+ 260   3            flag=1;
+ 261   3            operator='+';
+ 262   3          }
+ 263   2        }
+ 264   1        
+ 265   1      }
+ 266          
+ 267          void calculate ()
+ 268          {
+ 269   1        lcd_command(0xC0);
+ 270   1        if(operator=='+')
+ 271   1        {
+ 272   2          send_data(a+b);
+ 273   2        }
+ 274   1        if(operator=='-')
+ 275   1        {
+ 276   2          if(a>b)
+ 277   2          {
+ 278   3            send_data(a - b);
+ 279   3          }
+ 280   2          else if(a==b)
+ 281   2          {
+ 282   3            send_data(a-b);
+ 283   3          }
+ 284   2          else
+ 285   2          {
+ 286   3            lcd_char('-');
+ 287   3            send_data(b - a);
+ 288   3          }
+ 289   2        }
+ 290   1        if(operator=='/')
+ 291   1        {
+ 292   2          if(b != 0)
+ 293   2          {
+ 294   3            send_data(a/b);
+ 295   3          }
+ 296   2          else
+ 297   2          {
+ 298   3            lcd_command(0x01);
+ 299   3            lcd_string("ERROR");
+ 300   3          }
+ 301   2        }
+ 302   1        if(operator=='X')
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 6   
+
+ 303   1        {
+ 304   2          send_data(a*b);
+ 305   2        }
+ 306   1      }
+ 307          
+ 308          void  send_data (unsigned int x)
+ 309          {
+ 310   1        
+ 311   1        if(x>9999)
+ 312   1        {
+ 313   2          y=x/10000;
+ 314   2          lcd_char(y+0x30);
+ 315   2          x=x%10000;
+ 316   2          y=x/1000;
+ 317   2          lcd_char(y+0x30);
+ 318   2          x=x%1000;
+ 319   2          y=x/100;
+ 320   2          lcd_char(y+0x30);
+ 321   2          x=x%100;
+ 322   2          y=x/10;
+ 323   2          lcd_char(y+0x30);
+ 324   2          y=x%10;
+ 325   2          lcd_char(y+0x30);
+ 326   2        }
+ 327   1        else if(x>999 && x<9999)
+ 328   1        {
+ 329   2          y=x/1000;
+ 330   2          lcd_char(y+0x30);
+ 331   2          x=x%1000;
+ 332   2          y=x/100;
+ 333   2          lcd_char(y+0x30);
+ 334   2          x=x%100;
+ 335   2          y=x/10;
+ 336   2          lcd_char(y+0x30);
+ 337   2          y=x%10;
+ 338   2          lcd_char(y+0x30);
+ 339   2        }
+ 340   1        else if(x>99 && x<999)
+ 341   1        {
+ 342   2          y=x/100;
+ 343   2          lcd_char(y+0x30);
+ 344   2          x=x%100;
+ 345   2          y=x/10;
+ 346   2          lcd_char(y+0x30);
+ 347   2          y=x%10;
+ 348   2          lcd_char(y+0x30);
+ 349   2        }
+ 350   1        else if(x>9 && x<99)
+ 351   1        {
+ 352   2          y=x/10;
+ 353   2          lcd_char(y+0x30);
+ 354   2          y=x%10;
+ 355   2          lcd_char(y+0x30);
+ 356   2        }
+ 357   1        else
+ 358   1        {
+ 359   2          lcd_char(x+0x30);
+ 360   2        }
+ 361   1      }
+ 362          
+ 363          
+ 364          void main ()
+C51 COMPILER V9.60.7.0   CALCULATOR                                                        09/11/2024 15:10:45 PAGE 7   
+
+ 365          {
+ 366   1        lcd_init();
+ 367   1        lcd_command(0x80);
+ 368   1        lcd_string("Simple");
+ 369   1        lcd_command(0xC0);
+ 370   1        lcd_string("Calculator");
+ 371   1        delay(150);
+ 372   1        lcd_command(0x01);
+ 373   1        while(1)
+ 374   1        {
+ 375   2          lcd_command(0x80);
+ 376   2          lcd_string("MAKE OPEARTION");
+ 377   2          lcd_command(0xC0);
+ 378   2          row();
+ 379   2        }
+ 380   1      }
+ 381          
+ 382            
+ 383          
+ 384          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1286    ----
+   CONSTANT SIZE    =     39    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

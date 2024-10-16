@@ -1,0 +1,141 @@
+C51 COMPILER V9.60.7.0   7_SEG                                                             09/25/2024 12:16:13 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE 7_SEG
+OBJECT MODULE PLACED IN .\Objects\7_seg.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 7_seg.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\7_s
+                    -eg.lst) TABS(2) OBJECT(.\Objects\7_seg.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "KEYPAD.h"
+   4          #include "SEVEN.h"
+*** WARNING C318 IN LINE 4 OF 7_seg.c: can't open file 'SEVEN.h'
+   5          
+   6          
+   7          #define ledd P0
+   8          sbit c4=P1^0;
+   9          sbit c3=P1^1;
+  10          sbit c2=P1^2;
+  11          sbit c1=P1^3;
+  12          sbit r4=P1^4;
+  13          sbit r3=P1^5;
+  14          sbit r2=P1^6;
+  15          sbit r1=P1^7;
+  16          unsigned int message[]={0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
+  17          
+  18          void keypad1()
+  19          {
+  20   1      
+  21   1        c1=c2=c3=c4=1;
+  22   1        r1=0;r2=1;r3=1;r4=1;
+  23   1        if(c1==0)
+  24   1        {
+  25   2          while(c1==0);
+  26   2            ledd=0x07;
+  27   2        }
+  28   1        else if(c2==0)
+  29   1        {
+  30   2          while(c2==0);
+  31   2          ledd=0x7F;
+  32   2        }
+  33   1        else if(c3==0)
+  34   1        {
+  35   2          while(c3==0);
+  36   2          ledd=0x6F;
+  37   2        }
+  38   1        else if(c4==0)
+  39   1        {
+  40   2          while(c4==0);
+  41   2          ledd=0x06;
+  42   2        }
+  43   1        
+  44   1        
+  45   1        r1=1;r2=0;r3=1;r4=1;
+  46   1        if(c1==0)
+  47   1        {
+  48   2          while(c1==0);
+  49   2            ledd=0x66;
+  50   2        }
+  51   1        else if(c2==0)
+  52   1        {
+  53   2          while(c2==0);
+C51 COMPILER V9.60.7.0   7_SEG                                                             09/25/2024 12:16:13 PAGE 2   
+
+  54   2          ledd=0x6D;
+  55   2        }
+  56   1        else if(c3==0)
+  57   1        {
+  58   2          while(c3==0);
+  59   2          ledd=0x7D;
+  60   2        }
+  61   1        else if(c4==0)
+  62   1        {
+  63   2          while(c4==0);
+  64   2          lcd_char('x');
+  65   2        }
+  66   1        
+  67   1        r1=1;r2=1;r3=0;r4=1;
+  68   1        if(c1==0)
+  69   1        {
+  70   2          while(c1==0);
+  71   2          ledd=0x06;
+  72   2        }
+  73   1        else if(c2==0)
+  74   1        {
+  75   2          while(c2==0);
+  76   2          ledd=0x5B;
+  77   2        }
+  78   1        else if(c3==0)
+  79   1        {
+  80   2          while(c3==0);
+  81   2          ledd=message[3];
+  82   2        }
+  83   1        else if(c4==0)
+  84   1        {
+  85   2          while(c4==0);
+  86   2          lcd_char('-');
+  87   2        }
+  88   1        
+  89   1        
+  90   1        r1=1;r2=1;r3=1;r4=0;
+  91   1        if(c1==0)
+  92   1        {
+  93   2          while(c1==0);
+  94   2            lcd_command(0x01);
+  95   2        }
+  96   1        else if(c2==0)
+  97   1        {
+  98   2          while(c2==0);
+  99   2          ledd=message[0];
+ 100   2        }
+ 101   1        else if(c3==0)
+ 102   1        {
+ 103   2          while(c3==0);
+ 104   2          lcd_char('=');
+ 105   2        }
+ 106   1        else if(c4==0)
+ 107   1        {
+ 108   2          while(c4==0);
+ 109   2          lcd_char('+');
+ 110   2        }
+ 111   1        
+ 112   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.60.7.0   7_SEG                                                             09/25/2024 12:16:13 PAGE 3   
+
+   CODE SIZE        =    213    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     20    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

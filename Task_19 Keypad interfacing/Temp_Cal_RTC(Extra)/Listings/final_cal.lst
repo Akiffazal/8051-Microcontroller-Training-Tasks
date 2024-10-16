@@ -1,0 +1,685 @@
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FINAL_CAL
+OBJECT MODULE PLACED IN .\Objects\final_cal.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE final_cal.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\final_cal.lst) TABS(2) OBJECT(.\Objects\final_cal.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "cal.h"
+   3          #include "temperature.h"
+   4          #include "time.h" 
+   5          #include "btn.h" 
+   6          sbit led1=P2^0;
+   7          sbit led2=P2^1;
+   8          sbit led3=P2^2;
+   9          unsigned int ch2,r=0,state=0,KEY;
+  10          unsigned int y, a = 0, b = 0,u,kt=0,kl=0,k=0,ktx=0;
+  11          unsigned char operator, flag = 0;
+  12          sbit CE=P3^5;
+  13          sbit CLk=P3^6;
+  14          sbit io=P3^4;
+  15          sbit k1=P3^1;
+  16          char array[32];
+  17          char jj=0,ii=0,kk=0;
+  18          int clock_data[8];
+  19          void calcbody();
+  20          int r0w_scan();
+  21          void msdelay(unsigned char t);
+  22          void lcd_dat(unsigned char ch);
+  23          void send_num(unsigned int x);
+  24          void lcd_cmd(unsigned char ch);
+  25          void lcd_stringg(unsigned char *p);
+  26          void calculate();
+  27          unsigned char lcd;
+  28          
+  29          void main()
+  30          { 
+  31   1      
+  32   1        while(1)
+  33   1        { 
+  34   2          r0w_scan();
+  35   2      
+  36   2      switch(state) 
+  37   2      {
+  38   3      case 0:
+  39   3      
+  40   3          temppp();
+  41   3         delay_18B20(10);
+  42   3          break;
+  43   3      case 1:
+  44   3              time1();
+  45   3           delay_18B20(5);
+  46   3          break;
+  47   3      case 2:
+  48   3              
+  49   3            calcbody();
+  50   3            delay_18B20(5); 
+  51   3          break;
+  52   3      
+  53   3      case 3:  
+  54   3           kt=0;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 2   
+
+  55   3           k=0;
+  56   3          ktx=0;
+  57   3          state=0;
+  58   3      
+  59   3          delay_18B20(50);
+  60   3      
+  61   3      
+  62   3      
+  63   3      
+  64   3      
+  65   3      }}} 
+  66          
+  67          
+  68          
+  69          //
+  70          int temp_byte[8];
+  71          int temp;
+  72          int x;
+  73          unsigned int i;
+  74          unsigned int jx;
+  75          
+  76          
+  77          unsigned char sec,min,hour,day,month,year;
+  78          
+  79          
+  80          
+  81          
+  82           void SCLK_Pulse (void)
+  83          {
+  84   1        CLk=1;
+  85   1        CLk=0;
+  86   1      }
+  87          void Send_Bit (unsigned int value)
+  88          {
+  89   1          if (value != 0){
+  90   2              io=1;
+  91   2          }
+  92   1          else {
+  93   2              io=0;
+  94   2          }
+  95   1      }
+  96           void WriteByte(int content)
+  97          {
+  98   1      
+  99   1          for (i=0;i<8;i++){
+ 100   2                   x = (content & (1 << i));  //Write to Address
+ 101   2                   Send_Bit(x);
+ 102   2                   SCLK_Pulse();
+ 103   2              }
+ 104   1      }
+ 105          
+ 106          void Read_Burst (void)
+ 107          {
+ 108   1          CE=1;
+ 109   1          WriteByte(ADR_RD_BURST);
+ 110   1          for (i=0;i<8;i++){
+ 111   2              temp = 0;
+ 112   2          for (jx=0;jx<8;jx++){
+ 113   3                  temp >>= 1;
+ 114   3                      if (io == 1){
+ 115   4      
+ 116   4                          temp |= 0x80;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 3   
+
+ 117   4                             }
+ 118   3                             else {
+ 119   4      
+ 120   4                          temp  &= 0x7F;
+ 121   4                             }
+ 122   3      
+ 123   3                      SCLK_Pulse();
+ 124   3                      }
+ 125   2          clock_data[i] = temp;
+ 126   2          }
+ 127   1          CE=0;
+ 128   1      }
+ 129          
+ 130          
+ 131          void write_data(char cmd,char value)
+ 132          {
+ 133   1        CE=1;
+ 134   1        WriteByte(cmd);  //cmd
+ 135   1        WriteByte(value);  //data
+ 136   1        CE=0;
+ 137   1      }
+ 138          
+ 139          
+ 140           
+ 141           
+ 142           
+ 143           
+ 144          void time1() 
+ 145          { 
+ 146   1        k++;
+ 147   1      if(k<2)
+ 148   1        {
+ 149   2        LCDInit();
+ 150   2        
+ 151   2        write_data(ADR_WR_CREG,0x00);
+ 152   2        
+ 153   2        write_data(ADR_WR_TCR,0xAB);
+ 154   2      
+ 155   2      
+ 156   2        
+ 157   2      
+ 158   2      
+ 159   2        TL1=0xFF;
+ 160   2      
+ 161   2        TR1 = 1;    /* Start timer 1 */
+ 162   2          
+ 163   2      
+ 164   2         lcd_DisplayString("Time: ");
+ 165   2         /* Display "date" on Second line*/
+ 166   2        lcd_GoToLineTwo();
+ 167   2        lcd_DisplayString("Date: ");
+ 168   2        }
+ 169   1        
+ 170   1         /* Display the time and date continously */ 
+ 171   1        
+ 172   1            if (jj>ii)
+ 173   1            {
+ 174   2              if(array[ii-1]== 0x5C && array[ii]== 'r' ){
+ 175   3                  EA  = 0;
+ 176   3                  ES = 0; 
+ 177   3                
+ 178   3                ii=0;jj=0;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 4   
+
+ 179   3              }
+ 180   2              ii++;
+ 181   2            }
+ 182   1            CE=1;
+ 183   1            Read_Burst();
+ 184   1            CE=0;
+ 185   1      
+ 186   1       
+ 187   1            lcd_GoToXY(0,6);     
+ 188   1            lcd_DisplayRtcTime(clock_data[2],clock_data[1],clock_data[0]);
+ 189   1            if((clock_data[2]&0x80)>0){
+ 190   2              if((clock_data[2]&0x20)>0)
+ 191   2                lcd_DisplayString(" P");
+ 192   2              else
+ 193   2                lcd_DisplayString(" A");
+ 194   2            }
+ 195   1            else
+ 196   1              lcd_DisplayString("  ");
+ 197   1            
+ 198   1            lcd_GoToXY(1,6);     
+ 199   1            lcd_DisplayRtcDate(clock_data[3],clock_data[4],clock_data[6]);
+ 200   1           
+ 201   1      }
+ 202          
+ 203          
+ 204          
+ 205          
+ 206          
+ 207          
+ 208          
+ 209          
+ 210          
+ 211          
+ 212          
+ 213          
+ 214          
+ 215          
+ 216          
+ 217          
+ 218          
+ 219          
+ 220          
+ 221          
+ 222          
+ 223          
+ 224          
+ 225          
+ 226          
+ 227          
+ 228          
+ 229          
+ 230          
+ 231          //
+ 232          
+ 233          
+ 234          void temppp()
+ 235          {
+ 236   1          kt++;
+ 237   1      if(kt<2){
+ 238   2        lcd_init();
+ 239   2        lcd_string("Temprature:");
+ 240   2        
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 5   
+
+ 241   2      
+ 242   2      }
+ 243   1        
+ 244   1        
+ 245   1      body();
+ 246   1        }
+ 247          
+ 248          
+ 249          
+ 250          
+ 251          
+ 252          
+ 253          
+ 254          
+ 255          
+ 256          
+ 257          
+ 258          
+ 259          
+ 260          
+ 261          
+ 262          
+ 263          
+ 264          
+ 265          
+ 266          
+ 267          
+ 268          
+ 269          ///
+ 270          int r0w_scan()
+ 271          { 
+ 272   1          
+ 273   1          //---r0W 1---//
+ 274   1          r0 = 0;
+ 275   1          r1 = r2 = r3 = 1;
+ 276   1          if(c0 == 0)
+ 277   1          {
+ 278   2              msdelay(32);
+ 279   2              while(c0 == 0)
+ 280   2              {
+ 281   3                  lcd_dat('7');
+ 282   3                  if(flag == 0)
+ 283   3                      a = a*10 + 7;
+ 284   3                  else
+ 285   3                      b = b*10 + 7;
+ 286   3                  return 7;
+ 287   3              }
+ 288   2          }
+ 289   1          if(c1 == 0)
+ 290   1          {
+ 291   2              msdelay(32);
+ 292   2              while(c1 == 0)
+ 293   2              {
+ 294   3                  lcd_dat('8');
+ 295   3                  if(flag == 0)
+ 296   3                      a = a*10 + 8;
+ 297   3                  else
+ 298   3                      b = b*10 + 8;
+ 299   3              }
+ 300   2          }
+ 301   1          if(c2 == 0)
+ 302   1          {
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 6   
+
+ 303   2              msdelay(32);
+ 304   2              while(c2 == 0)
+ 305   2              {
+ 306   3                  lcd_dat('9');
+ 307   3                  if(flag == 0)
+ 308   3                      a = a*10 + 9;
+ 309   3                  else
+ 310   3                      b = b*10 + 9;
+ 311   3              }
+ 312   2          }
+ 313   1          if(c3 == 0)
+ 314   1          {
+ 315   2              msdelay(32);
+ 316   2              while(c3 == 0)
+ 317   2              {
+ 318   3                  flag = 1;
+ 319   3                  lcd_dat('/');
+ 320   3                  operator = '/';
+ 321   3              }
+ 322   2          }
+ 323   1      
+ 324   1          //---r0W 2---//
+ 325   1          r1 = 0;
+ 326   1          r0 = r2 = r3 = 1;
+ 327   1          if(c0 == 0)
+ 328   1          {
+ 329   2              msdelay(32);
+ 330   2              while(c0 == 0)
+ 331   2              {
+ 332   3                  lcd_dat('4');
+ 333   3                  if(flag == 0)
+ 334   3                      a = a*10 + 4;
+ 335   3                  else
+ 336   3                      b = b*10 + 4;
+ 337   3              }
+ 338   2          }
+ 339   1          if(c1 == 0)
+ 340   1          {
+ 341   2              msdelay(32);
+ 342   2              while(c1 == 0)
+ 343   2              {
+ 344   3                  lcd_dat('5');
+ 345   3                  if(flag == 0)
+ 346   3                      a = a*10 + 5;
+ 347   3                  else
+ 348   3                      b = b*10 + 5;
+ 349   3              }
+ 350   2          }
+ 351   1          if(c2 == 0)
+ 352   1          {
+ 353   2              msdelay(32);
+ 354   2              while(c2 == 0)
+ 355   2              {
+ 356   3                  lcd_dat('6');
+ 357   3                  if(flag == 0)
+ 358   3                      a = a*10 + 6;
+ 359   3                  else
+ 360   3                      b = b*10 + 6;
+ 361   3              }
+ 362   2          }
+ 363   1          if(c3 == 0)
+ 364   1          {
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 7   
+
+ 365   2              msdelay(32);
+ 366   2              while(c3 == 0)
+ 367   2              {
+ 368   3                  flag = 1;
+ 369   3                  lcd_dat('x');
+ 370   3                  operator = 'x';
+ 371   3              }
+ 372   2          }
+ 373   1      
+ 374   1          //---r0W 3---//
+ 375   1          r2 = 0;
+ 376   1          r1 = r0 = r3 = 1;
+ 377   1          if(c0 == 0)
+ 378   1          {
+ 379   2              msdelay(32);
+ 380   2              while(c0 == 0)
+ 381   2              {
+ 382   3                  lcd_dat('1');
+ 383   3                  if(flag == 0)
+ 384   3                      a = a*10 + 1;
+ 385   3                  else
+ 386   3                      b = b*10 + 1;
+ 387   3              }
+ 388   2          }
+ 389   1          if(c1 == 0)
+ 390   1          {
+ 391   2              msdelay(32);
+ 392   2              while(c1 == 0)
+ 393   2              {
+ 394   3                  lcd_dat('2');
+ 395   3                  if(flag == 0)
+ 396   3                      a = a*10 + 2;
+ 397   3                  else
+ 398   3                      b = b*10 + 2;
+ 399   3              }
+ 400   2          }
+ 401   1          if(c2 == 0)
+ 402   1          {
+ 403   2              msdelay(32);
+ 404   2              while(c2 == 0)
+ 405   2              {
+ 406   3                  lcd_dat('3');
+ 407   3                  if(flag == 0)
+ 408   3                      a = a*10 + 3;
+ 409   3                  else
+ 410   3                      b = b*10 + 3;
+ 411   3              }
+ 412   2          }
+ 413   1          if(c3 == 0)
+ 414   1          {
+ 415   2              msdelay(32);
+ 416   2              while(c3 == 0)
+ 417   2              {
+ 418   3                  flag = 1;
+ 419   3                  lcd_dat('-');
+ 420   3                  operator = '-';
+ 421   3              
+ 422   3              }
+ 423   2          }
+ 424   1      
+ 425   1          //---r0W 4---//
+ 426   1          r3 = 0;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 8   
+
+ 427   1          r1 = r2 = r0 = 1;
+ 428   1          if(c0 == 0)
+ 429   1          {
+ 430   2          
+ 431   2              msdelay(32);
+ 432   2              while(c0 == 0)
+ 433   2              {  
+ 434   3                 
+ 435   3                  if(flag == 0)
+ 436   3                      a = a*10 + 0;
+ 437   3                  else
+ 438   3                      b = b*10 + 0;
+ 439   3                state++;
+ 440   3                 
+ 441   3              }
+ 442   2          }
+ 443   1          if(c1 == 0)
+ 444   1          {
+ 445   2              msdelay(32);
+ 446   2              while(c1 == 0)
+ 447   2              {
+ 448   3                  lcd_dat('0');
+ 449   3                  if(flag == 0)
+ 450   3                      a = a*10 + 0;
+ 451   3                  else
+ 452   3                      b = b*10 + 0;
+ 453   3                       
+ 454   3              }
+ 455   2          }
+ 456   1          if(c2 == 0)
+ 457   1          {
+ 458   2              msdelay(32);
+ 459   2              while(c2 == 0)
+ 460   2              {
+ 461   3                  lcd_dat('=');
+ 462   3                  calculate();
+ 463   3              }
+ 464   2          }
+ 465   1          if(c3 == 0)
+ 466   1          {
+ 467   2              msdelay(32);
+ 468   2              while(c3 == 0)
+ 469   2              {
+ 470   3                  flag = 1;
+ 471   3                  lcd_dat('+');
+ 472   3                  operator = '+';
+ 473   3              }
+ 474   2          }
+ 475   1          return 0;
+ 476   1      }
+ 477          
+ 478          
+ 479          
+ 480          
+ 481          void calculate()
+ 482          {
+ 483   1       
+ 484   1          if(operator == '+')
+ 485   1          {
+ 486   2              send_num(a + b);
+ 487   2          }
+ 488   1      
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 9   
+
+ 489   1          if(operator == '-')
+ 490   1          {
+ 491   2              if(a > b)
+ 492   2                  send_num(a - b);
+ 493   2              else
+ 494   2              {
+ 495   3                  lcd_dat('-');
+ 496   3                  send_num(b - a);
+ 497   3              }
+ 498   2          }
+ 499   1      
+ 500   1          if(operator == '/')
+ 501   1          {
+ 502   2              if(b != 0)
+ 503   2                  send_num(a/b);
+ 504   2              else
+ 505   2              {
+ 506   3                  lcd_cmd(0x01);
+ 507   3                  lcd_stringg("NaN");
+ 508   3              }
+ 509   2          }
+ 510   1      
+ 511   1          if(operator == 'x')
+ 512   1          {
+ 513   2              send_num(a*b);
+ 514   2          }
+ 515   1      }
+ 516          
+ 517          void send_num(unsigned int x)
+ 518          {
+ 519   1          if(x > 9999)
+ 520   1          {
+ 521   2              y = x/10000;
+ 522   2              lcd_dat(y + 0x30);
+ 523   2              x = x%10000;
+ 524   2              y = x/1000;
+ 525   2              lcd_dat(y + 0x30);
+ 526   2              x = x%1000;
+ 527   2              y = x/100;
+ 528   2              lcd_dat(y + 0x30);
+ 529   2              x = x%100;
+ 530   2              y = x/10;
+ 531   2              lcd_dat(y + 0x30);
+ 532   2              y = x%10;
+ 533   2              lcd_dat(y + 0x30);
+ 534   2          }
+ 535   1          else if(x > 999 && x < 9999)
+ 536   1          {
+ 537   2              y = x/1000;
+ 538   2              lcd_dat(y + 0x30);
+ 539   2              x = x%1000;
+ 540   2              y = x/100;
+ 541   2              lcd_dat(y + 0x30);
+ 542   2              x = x%100;
+ 543   2              y = x/10;
+ 544   2              lcd_dat(y + 0x30);
+ 545   2              y = x%10;
+ 546   2              lcd_dat(y + 0x30);
+ 547   2          }
+ 548   1          else if(x > 99 && x < 999)
+ 549   1          {
+ 550   2              y = x/100;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 10  
+
+ 551   2              lcd_dat(y + 0x30);
+ 552   2              x = x%100;
+ 553   2              y = x/10;
+ 554   2              lcd_dat(y + 0x30);
+ 555   2              y = x%10;
+ 556   2              lcd_dat(y + 0x30);
+ 557   2          }
+ 558   1          else if(x > 9 && x < 99)
+ 559   1          {
+ 560   2              y = x/10;
+ 561   2              lcd_dat(y + 0x30);
+ 562   2              y = x%10;
+ 563   2              lcd_dat(y + 0x30);
+ 564   2          }
+ 565   1          else
+ 566   1          {
+ 567   2              lcd_dat(x + 0x30);
+ 568   2          }
+ 569   1      }
+ 570          
+ 571          void lcd_initt()
+ 572          {
+ 573   1          delay1(20);   /* LCD Power ON Initialization time >15ms */
+ 574   1        lcd_cmd (0x01);
+ 575   1        lcd_cmd (0x38); /* Initialization of 16X2 LCD in 8bit mode */
+ 576   1        lcd_cmd (0x0E); /* Display ON Cursor blinking */
+ 577   1        lcd_cmd (0x06); /* Auto Increment cursor */
+ 578   1        lcd_cmd (0x01); /* clear display */
+ 579   1        lcd_cmd (0x80); /* cursor at home position */
+ 580   1      
+ 581   1      }
+ 582          
+ 583          // send commands
+ 584          
+ 585          void lcd_cmd(unsigned char ch)
+ 586          {
+ 587   1        lcd = ch;
+ 588   1        rs = 0;
+ 589   1        rw = 0;
+ 590   1        en = 1;
+ 591   1        msdelay(20);
+ 592   1        en = 0;
+ 593   1        
+ 594   1      }
+ 595          
+ 596          // send data
+ 597          
+ 598          void lcd_dat(unsigned char ch)
+ 599          {
+ 600   1        lcd = ch;
+ 601   1        rs = 1;
+ 602   1        rw = 0;
+ 603   1        en = 1;
+ 604   1        msdelay(40);
+ 605   1        en = 0;
+ 606   1      }
+ 607          
+ 608          // delay
+ 609          
+ 610          void msdelay(unsigned char t)
+ 611          {
+ 612   1        unsigned int i, j;
+C51 COMPILER V9.60.7.0   FINAL_CAL                                                         09/16/2024 10:33:07 PAGE 11  
+
+ 613   1        for(i = 0; i < t; i++)
+ 614   1        for(j = 0; j < 1275; j++);
+ 615   1      }
+ 616            
+ 617                     
+ 618                    
+ 619          
+ 620          void calcbody()
+ 621          {   ktx++;
+ 622   1      
+ 623   1      if(ktx<2){
+ 624   2        lcd_initt();
+ 625   2        lcd_string("SIM CALCULATOR ");
+ 626   2          lcd_cmd(0xC0);}
+ 627   1              r0w_scan();
+ 628   1      }  
+ 629          
+ 630          
+ 631          
+ 632          // send a string of data
+ 633          
+ 634          void lcd_stringg(unsigned char *p)
+ 635          {
+ 636   1        while(*p != '\0')
+ 637   1        {
+ 638   2          lcd_dat(*p);
+ 639   2          p++;
+ 640   2        }
+ 641   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1832    ----
+   CONSTANT SIZE    =     55    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =    108       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

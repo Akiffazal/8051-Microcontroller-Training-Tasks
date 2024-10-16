@@ -1,0 +1,125 @@
+C51 COMPILER V9.60.7.0   7SD                                                               09/13/2024 11:05:35 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE 7SD
+OBJECT MODULE PLACED IN .\Objects\7sd.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 7sd.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\7sd.l
+                    -st) TABS(2) OBJECT(.\Objects\7sd.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "TEMP.h"
+   3          
+   4          unsigned char indexx=0;
+   5          unsigned int select[]={0x0C, 0x08, 0x04, 0x00};
+   6          unsigned int massege[]={0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
+   7          unsigned char values[4];
+   8          
+   9          void display_num7_seg(unsigned char num)
+  10          {
+  11   1        int i=3;
+  12   1        while(num!=0)
+  13   1        {
+  14   2          values[i]=num%10;
+  15   2          num=num/10;
+  16   2          i--;
+  17   2        }
+  18   1      }
+  19          void values_on_ssd (void)
+  20          {
+  21   1        switch(values[indexx])
+  22   1        {
+  23   2          case 0:
+  24   2          {
+  25   3            P2=select[indexx];
+  26   3            P0=massege[0];
+  27   3          }
+  28   2          break;
+  29   2          case 1:
+  30   2          {
+  31   3            P2=select[indexx];
+  32   3            P0=massege[1];
+  33   3          
+  34   3          }
+  35   2            break;
+  36   2          case 2:
+  37   2          {
+  38   3            P2=select[indexx];
+  39   3            P0=massege[2];
+  40   3            
+  41   3          }
+  42   2            break;
+  43   2          case 3:
+  44   2          {
+  45   3            P2=select[indexx];
+  46   3            P0=massege[3];
+  47   3            
+  48   3          }
+  49   2            break;
+  50   2          case 4:
+  51   2          {
+  52   3            P2=select[indexx];
+  53   3            P0=massege[4];
+  54   3            
+C51 COMPILER V9.60.7.0   7SD                                                               09/13/2024 11:05:35 PAGE 2   
+
+  55   3          }
+  56   2            break;
+  57   2          case 5:
+  58   2          {
+  59   3            P2=select[indexx];
+  60   3            P0=massege[5];
+  61   3            
+  62   3          }
+  63   2            break;
+  64   2          case 6:
+  65   2          {
+  66   3            P2=select[indexx];
+  67   3            P0=massege[6];
+  68   3            
+  69   3          }
+  70   2            break;
+  71   2          case 7:
+  72   2          {
+  73   3            P2=select[indexx];
+  74   3            P0=massege[7];
+  75   3            
+  76   3          }
+  77   2            break;
+  78   2          case 8:
+  79   2          {
+  80   3            P2=select[indexx];
+  81   3            P0=massege[8];
+  82   3            
+  83   3          }
+  84   2            break;
+  85   2          case 9:
+  86   2          {
+  87   3            P2=select[indexx];
+  88   3            P0=massege[9];
+  89   3          }
+  90   2          break;
+  91   2          default:
+  92   2            break;
+  93   2        }
+  94   1        indexx+=1;
+  95   1        if(indexx>3)
+  96   1        {
+  97   2          indexx=0;
+  98   2        }
+  99   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    254    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     33    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
