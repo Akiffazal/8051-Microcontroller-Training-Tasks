@@ -61,6 +61,18 @@ This repository contains the completed tasks from the STC89C52 training manual, 
    - Sent and received data over the serial port at a baud rate of 9600.
    - Implemented functions to process and display data sent via serial communication on the LCD.
 
+### 19. **Keypad Interfacing and Multi-Application State Machine**
+   - Interfaced a 4x4 keypad with the STC89C52 microcontroller.
+   - Displayed the pressed key on both the LCD and seven-segment display.
+   - Developed a basic calculator supporting addition, subtraction, multiplication, and division.
+   - Implemented a state machine to switch between three applications:
+     1. **Calculator**: Performs basic arithmetic operations.
+     2. **Real-Time Clock**: Displays time and date from the RTC.
+     3. **Temperature Monitor**: Displays current temperature and allows setting a threshold via the keypad.
+   - Pressing the ON/C button on the keypad switches between the applications.
+   - Implemented non-blocking debounce for the keypad.
+   - Organized the code into separate files for each application (`calculator.c`, `RTC.c`, `temp_monitor.c`).
+
 ## Project Structure
 
 Each task is stored in a separate folder, organized as follows:
@@ -81,7 +93,8 @@ Each task is stored in a separate folder, organized as follows:
 ├── Task 12 - Seven Segment Display
 ├── Task 13 - File Organization
 ├── Task 14 - LCD Interfacing
-└── Task 15 - Serial Port Programming
+├── Task 15 - Serial Port Programming
+└── Task 19 - Keypad Interfacing and Multi-Application State Machine
 ```
 
 ## Getting Started
@@ -97,4 +110,4 @@ This project is for educational purposes and follows the instructions provided i
 
 ---
 
-You can modify this as needed to include additional information or updates!
+This includes the new **Task 19** while keeping the original structure intact as requested.
