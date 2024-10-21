@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\Temp.obj",
+".\Objects\LCD.obj",
+".\Objects\7sd.obj" 
+TO ".\Objects\Temp_Sensor" 
+PRINT(".\Listings\Temp_Sensor.m51") RAMSIZE(256) 
