@@ -1,0 +1,306 @@
+C51 COMPILER V9.60.7.0   RTC_DS1302                                                        09/24/2024 15:00:44 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE RTC_DS1302
+OBJECT MODULE PLACED IN .\Objects\RTC_DS1302.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE RTC_DS1302.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\RTC_DS1302.lst) TABS(2) OBJECT(.\Objects\RTC_DS1302.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          // DS1302 Pin Definitions
+   4          sbit DS1302_SCLK = P3^6;
+   5          sbit DS1302_IO = P3^4;
+   6          sbit DS1302_CE = P3^5;
+   7          
+   8          // LCD1602 Pin Definitions
+   9          sbit LCD_RS = P2^6;
+  10          sbit LCD_RW = P2^5;
+  11          sbit LCD_EN = P2^7;
+  12          
+  13          #define LCD_DataPort P0
+  14          
+  15          // DS1302 Command Definitions
+  16          #define DS1302_SECOND 0x80
+  17          #define DS1302_MINUTE 0x82
+  18          #define DS1302_HOUR 0x84
+  19          #define DS1302_DATE 0x86
+  20          #define DS1302_MONTH 0x88
+  21          #define DS1302_DAY 0x8A
+  22          #define DS1302_YEAR 0x8C
+  23          #define DS1302_WP 0x8E 
+  24          
+  25          // Time array {Year, Month, Date, Hour, Minute, Second, Day of Week}
+  26          unsigned int DS1302_Time[] = {23, 12, 31, 23, 59, 50, 6};
+  27          
+  28          // Function Prototypes
+  29          void DS1302_Init();
+  30          void DS1302_WriteByte(unsigned char Command, unsigned char Data);
+  31          unsigned char DS1302_ReadByte(unsigned char Command);
+  32          void DS1302_SetTime();
+  33          void DS1302_ReadTime();
+  34          
+  35          void LCD_Init();
+  36          void LCD_Delay();
+  37          void LCD_WriteCommand(unsigned char Command);
+  38          void LCD_WriteData(unsigned char Data);
+  39          void LCD_SetCursor(unsigned char Line, unsigned char Column);
+  40          void LCD_ShowChar(unsigned char Line, unsigned char Column, char Char);
+  41          void LCD_ShowString(unsigned char Line, unsigned char Column, char *String);
+  42          int LCD_Pow(int X, int Y);
+  43          void LCD_ShowNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length);
+  44          void LCD_ShowSignedNum(unsigned char Line, unsigned char Column, int Number, unsigned char Length);
+  45          void LCD_ShowHexNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length);
+  46          void LCD_ShowBinNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length);
+  47          
+  48          
+  49          void main() {
+  50   1          LCD_Init();
+  51   1          DS1302_Init();
+  52   1      
+  53   1          // Initialize the LCD with labels and placeholders
+  54   1          LCD_ShowString(1, 1, "Date: ");
+C51 COMPILER V9.60.7.0   RTC_DS1302                                                        09/24/2024 15:00:44 PAGE 2   
+
+  55   1          LCD_ShowString(2, 1, "Time: ");
+  56   1      
+  57   1          DS1302_SetTime();
+  58   1      
+  59   1          while (1) {
+  60   2              DS1302_ReadTime();
+  61   2      
+  62   2              // Display Date
+  63   2              LCD_ShowNum(1, 7, DS1302_Time[2], 2); // Day
+  64   2              LCD_ShowChar(1, 9, '/');
+  65   2              LCD_ShowNum(1, 10, DS1302_Time[1], 2); // Month
+  66   2              LCD_ShowChar(1, 12, '/');
+  67   2              LCD_ShowNum(1, 13, DS1302_Time[0], 2); // Year
+  68   2      
+  69   2              // Display Time
+  70   2              LCD_ShowNum(2, 7, DS1302_Time[3], 2); // Hour
+  71   2              LCD_ShowChar(2, 9, ':');
+  72   2              LCD_ShowNum(2, 10, DS1302_Time[4], 2); // Minute
+  73   2              LCD_ShowChar(2, 12, ':');
+  74   2              LCD_ShowNum(2, 13, DS1302_Time[5], 2); // Second
+  75   2          }
+  76   1      }
+  77          
+  78          // DS1302 Functions
+  79          void DS1302_Init() {
+  80   1          DS1302_CE = 0;
+  81   1          DS1302_SCLK = 0;
+  82   1          DS1302_IO = 0; // Set IO to low as default
+  83   1      }
+  84          
+  85          void DS1302_WriteByte(unsigned char Command, unsigned char Data) {
+  86   1          unsigned int i;
+  87   1      
+  88   1          DS1302_CE = 1;
+  89   1      
+  90   1          for (i = 0; i < 8; i++) {
+  91   2              DS1302_IO = Command & (0x01 << i);
+  92   2              DS1302_SCLK = 1; 
+  93   2              DS1302_SCLK = 0;
+  94   2          }
+  95   1      
+  96   1          for (i = 0; i < 8; i++) {
+  97   2              DS1302_IO = Data & (0x01 << i);
+  98   2              DS1302_SCLK = 1;
+  99   2              DS1302_SCLK = 0;
+ 100   2          }
+ 101   1          DS1302_CE = 0;
+ 102   1      }
+ 103          
+ 104          unsigned char DS1302_ReadByte(unsigned char Command) {
+ 105   1          unsigned char i, Data = 0x00;
+ 106   1          Command |= 0x01;
+ 107   1          DS1302_CE = 1;
+ 108   1      
+ 109   1          for (i = 0; i < 8; i++) {
+ 110   2              DS1302_IO = Command & (0x01 << i);
+ 111   2              DS1302_SCLK = 0;
+ 112   2              DS1302_SCLK = 1;
+ 113   2          }
+ 114   1          
+ 115   1          DS1302_IO = 1;  // Set to input mode
+ 116   1      
+C51 COMPILER V9.60.7.0   RTC_DS1302                                                        09/24/2024 15:00:44 PAGE 3   
+
+ 117   1          for (i = 0; i < 8; i++) {
+ 118   2              DS1302_SCLK = 1;
+ 119   2              DS1302_SCLK = 0;
+ 120   2      
+ 121   2              if (DS1302_IO) {
+ 122   3                  Data |= (0x01 << i);
+ 123   3              }
+ 124   2          }
+ 125   1      
+ 126   1          DS1302_CE = 0;
+ 127   1          DS1302_IO = 0; // Set to low as default
+ 128   1      
+ 129   1          return Data;
+ 130   1      }
+ 131          
+ 132          void DS1302_SetTime() {
+ 133   1          DS1302_WriteByte(DS1302_WP, 0x00);
+ 134   1          DS1302_WriteByte(DS1302_YEAR, DS1302_Time[0] /10*16 + DS1302_Time[0]%10);
+ 135   1          DS1302_WriteByte(DS1302_MONTH, DS1302_Time[1] /10*16 + DS1302_Time[1]%10);
+ 136   1          DS1302_WriteByte(DS1302_DATE, DS1302_Time[2] /10*16 + DS1302_Time[2]%10);
+ 137   1          DS1302_WriteByte(DS1302_HOUR, DS1302_Time[3] /10*16 + DS1302_Time[3]%10);
+ 138   1          DS1302_WriteByte(DS1302_MINUTE, DS1302_Time[4] /10*16 + DS1302_Time[4]%10);
+ 139   1          DS1302_WriteByte(DS1302_SECOND, DS1302_Time[5] /10*16 + DS1302_Time[5]%10);
+ 140   1          DS1302_WriteByte(DS1302_DAY, DS1302_Time[6] /10*16 + DS1302_Time[6]%10);
+ 141   1          DS1302_WriteByte(DS1302_WP, 0x80);
+ 142   1      }
+ 143          
+ 144          void DS1302_ReadTime() {
+ 145   1          unsigned int Temp;
+ 146   1          Temp = DS1302_ReadByte(DS1302_YEAR);
+ 147   1          DS1302_Time[0] = Temp/16*10+Temp%16;
+ 148   1          Temp = DS1302_ReadByte(DS1302_MONTH);
+ 149   1          DS1302_Time[1] = Temp/16*10+Temp%16;
+ 150   1          Temp = DS1302_ReadByte(DS1302_DATE);
+ 151   1          DS1302_Time[2] = Temp/16*10+Temp%16;
+ 152   1          Temp = DS1302_ReadByte(DS1302_HOUR);
+ 153   1          DS1302_Time[3] = Temp/16*10+Temp%16;
+ 154   1          Temp = DS1302_ReadByte(DS1302_MINUTE);
+ 155   1          DS1302_Time[4] = Temp/16*10+Temp%16;
+ 156   1          Temp = DS1302_ReadByte(DS1302_SECOND);
+ 157   1          DS1302_Time[5] = Temp/16*10+Temp%16;
+ 158   1          Temp = DS1302_ReadByte(DS1302_DAY);
+ 159   1          DS1302_Time[6] = Temp/16*10+Temp%16;    
+ 160   1      }
+ 161          
+ 162          // LCD1602 Functions
+ 163          void LCD_Delay() {
+ 164   1          unsigned char i, j;
+ 165   1      
+ 166   1          i = 2;
+ 167   1          j = 239;
+ 168   1      
+ 169   1          do {
+ 170   2              while (--j);
+ 171   2          } while (--i);
+ 172   1      }
+ 173          
+ 174          void LCD_WriteCommand(unsigned char Command) {
+ 175   1          LCD_RS = 0;
+ 176   1          LCD_RW = 0;
+ 177   1          LCD_DataPort = Command;
+ 178   1          LCD_EN = 1;
+C51 COMPILER V9.60.7.0   RTC_DS1302                                                        09/24/2024 15:00:44 PAGE 4   
+
+ 179   1          LCD_Delay();
+ 180   1          LCD_EN = 0;
+ 181   1          LCD_Delay();
+ 182   1      }
+ 183          
+ 184          void LCD_WriteData(unsigned char Data) {
+ 185   1          LCD_RS = 1;
+ 186   1          LCD_RW = 0;
+ 187   1          LCD_DataPort = Data;
+ 188   1          LCD_EN = 1;
+ 189   1          LCD_Delay();
+ 190   1          LCD_EN = 0;
+ 191   1          LCD_Delay();
+ 192   1      }
+ 193          
+ 194          void LCD_SetCursor(unsigned char Line, unsigned char Column) {
+ 195   1          if (Line == 1) {
+ 196   2              LCD_WriteCommand(0x80 | (Column - 1));
+ 197   2          } else if (Line == 2) {
+ 198   2              LCD_WriteCommand(0x80 + (Column - 1 + 0x40));
+ 199   2          }
+ 200   1      }
+ 201          
+ 202          void LCD_Init() {
+ 203   1          LCD_WriteCommand(0x38); 
+ 204   1          LCD_WriteCommand(0x0c); 
+ 205   1          LCD_WriteCommand(0x06); 
+ 206   1          LCD_WriteCommand(0x01); 
+ 207   1      }
+ 208          
+ 209          void LCD_ShowChar(unsigned char Line, unsigned char Column, char Char) {
+ 210   1          LCD_SetCursor(Line, Column);
+ 211   1          LCD_WriteData(Char);
+ 212   1      }
+ 213          
+ 214          void LCD_ShowString(unsigned char Line, unsigned char Column, char *String) {
+ 215   1          unsigned char i;
+ 216   1          LCD_SetCursor(Line, Column);
+ 217   1          for (i = 0; String[i] != '\0'; i++) {
+ 218   2              LCD_WriteData(String[i]);
+ 219   2          }
+ 220   1      }
+ 221          
+ 222          int LCD_Pow(int X, int Y) {
+ 223   1          unsigned char i;
+ 224   1          int Result = 1;
+ 225   1          for (i = 0; i < Y; i++) {
+ 226   2              Result *= X;
+ 227   2          }
+ 228   1          return Result;
+ 229   1      }
+ 230          
+ 231          void LCD_ShowNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length) {
+ 232   1          unsigned char i;
+ 233   1          LCD_SetCursor(Line, Column);
+ 234   1          for (i = Length; i > 0; i--) {
+ 235   2              LCD_WriteData('0' + Number / LCD_Pow(10, i - 1) % 10);
+ 236   2          }
+ 237   1      }
+ 238          
+ 239          void LCD_ShowSignedNum(unsigned char Line, unsigned char Column, int Number, unsigned char Length) {
+ 240   1          unsigned char i;
+C51 COMPILER V9.60.7.0   RTC_DS1302                                                        09/24/2024 15:00:44 PAGE 5   
+
+ 241   1          unsigned int Number1;
+ 242   1          LCD_SetCursor(Line, Column);
+ 243   1          if (Number >= 0) {
+ 244   2              LCD_WriteData('+');
+ 245   2              Number1 = Number;
+ 246   2          } else {
+ 247   2              LCD_WriteData('-');
+ 248   2              Number1 = -Number;
+ 249   2          }
+ 250   1          for (i = Length; i > 0; i--) {
+ 251   2              LCD_WriteData('0' + Number1 / LCD_Pow(10, i - 1) % 10);
+ 252   2          }
+ 253   1      }
+ 254          
+ 255          void LCD_ShowHexNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length) {
+ 256   1          unsigned char i, SingleNumber;
+ 257   1          LCD_SetCursor(Line, Column);
+ 258   1          for (i = Length; i > 0; i--) {
+ 259   2              SingleNumber = Number / LCD_Pow(16, i - 1) % 16;
+ 260   2              if (SingleNumber < 10) {
+ 261   3                  LCD_WriteData('0' + SingleNumber);
+ 262   3              } else {
+ 263   3                  LCD_WriteData('A' + SingleNumber - 10);
+ 264   3              }
+ 265   2          }
+ 266   1      }
+ 267          
+ 268          void LCD_ShowBinNum(unsigned char Line, unsigned char Column, unsigned int Number, unsigned char Length) {
+ 269   1          unsigned char i;
+ 270   1          LCD_SetCursor(Line, Column);
+ 271   1          for (i = Length; i > 0; i--) {
+ 272   2              LCD_WriteData('0' + Number / LCD_Pow(2, i - 1) % 2);
+ 273   2          }
+ 274   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1251    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14      30
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

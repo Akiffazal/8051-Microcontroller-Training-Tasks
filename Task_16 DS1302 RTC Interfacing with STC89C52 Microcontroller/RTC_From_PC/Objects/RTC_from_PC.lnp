@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\lcd.obj" 
+TO ".\Objects\RTC_from_PC" 
+PRINT(".\Listings\RTC_from_PC.m51") RAMSIZE(256) 

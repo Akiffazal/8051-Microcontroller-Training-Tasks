@@ -1,0 +1,3 @@
+".\Objects\RTC_DS1302.obj" 
+TO ".\Objects\Task_16_3" 
+PRINT(".\Listings\Task_16_3.m51") RAMSIZE(256) 

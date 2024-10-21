@@ -1,0 +1,657 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include <string.h>
+   4          
+   5          #include <stdio.h>
+   6          
+   7          sbit DS1302_IO=P3^4;
+   8          sbit DS1302_CE=P3^5;
+   9          sbit DS1302_CLK=P3^6;
+  10          
+  11          #define DS1302_READ_BURST 0xBF
+  12          #define DS1302_WRITE_BURST 0xBE
+  13          #define DS1302_SECOND 0x80
+  14          #define DS1302_SECOND_READ 0x81
+  15          #define DS1302_MINUTE 0x82
+  16          #define DS1302_MINUTE_READ 0x83
+  17          #define DS1302_HOUR 0x84 
+  18          #define DS1302_HOUR_READ 0x85
+  19          #define DS1302_DATE 0x86
+  20          #define DS1302_MONTH 0x88
+  21          #define DS1302_DAY 0x8A
+  22          #define DS1302_YEAR 0x8C
+  23          #define DS1302_CONTROL 0x8E
+  24          #define DS1302_CHARGER 0x90
+  25          #define DS1302_RAMBURST_READ 0xFF
+  26          #define DS1302_RAMBURST_WRITE 0xFE
+  27          #define CLK_DELAY 10
+  28          
+  29          
+  30          
+  31          void write_byte(unsigned int byte);
+  32          unsigned char read_byte(unsigned char cmd);
+  33          void DS1302_settime(unsigned char hour, unsigned char minute, unsigned char second);  
+  34          //void DS1302_setdate(unsigned char day, unsigned char month, unsigned char year);
+  35          void DS1302_gettime(void);
+  36          //void DS1302_getdate(void);
+  37          void send_bit(unsigned int bitt);
+  38          void DS1302_init();
+  39          void DS1302_readbyte();
+  40          
+  41          void UART_receivedata();
+  42          void UART_init();
+  43           
+  44          unsigned int read_bytes[12];
+  45           unsigned char receivedata;
+  46           unsigned char receivemsg[20];
+  47           unsigned int index=0;
+  48           bit messagereceived=0;
+  49          
+  50          
+  51           
+  52          void extract_time_set_rtc(char *timestring)
+  53          {
+  54   1        unsigned int hour, minute, second;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 2   
+
+  55   1        char timeformatted[7];
+  56   1        sscanf(timestring, "%hhu:%hhu:%hhu",&hour,&minute,&second);
+  57   1        sprintf(timeformatted, "%02u,%02u,%02u",hour,minute,second);
+  58   1        lcd_set_cursor(0,0);
+  59   1        lcd_string("TIME:");
+  60   1        lcd_set_cursor(0,6);
+  61   1        lcd_string(timeformatted);
+  62   1        sscanf(timestring,"0x%hhx:0x%hhx:0x%hhx",&hour,&minute,&second);
+  63   1        DS1302_settime((unsigned char)hour,(unsigned char)minute,(unsigned char)second);
+  64   1        
+  65   1      }
+  66          
+  67          
+  68          
+  69          
+  70          void UART_init()
+  71           {
+  72   1         TMOD=0x20;
+  73   1         TH1=0xFD; //9600
+  74   1         SCON=0x50;
+  75   1         TR1=1;
+  76   1       }
+  77           
+  78           
+  79          void UART_receivedata()
+  80           {
+  81   1         while(RI==0);
+  82   1         RI=0;
+  83   1         receivedata=SBUF;
+  84   1         messagereceived=1;
+  85   1       }
+  86           
+  87           
+  88          void SCLK_Pulse()
+  89          {
+  90   1        DS1302_CLK=1;
+  91   1        DS1302_CLK=0;
+  92   1      }
+  93          
+  94          
+  95          void send_bit(unsigned int bitt)
+  96          {
+  97   1        if(bitt!=0)
+  98   1        {
+  99   2          DS1302_IO=1;                    //one bit write
+ 100   2        }
+ 101   1        else
+ 102   1        {
+ 103   2          DS1302_IO=0;
+ 104   2        }
+ 105   1      }
+ 106          
+ 107          
+ 108          void write_byte(unsigned int byte)
+ 109          {
+ 110   1        unsigned int i,Bit;
+ 111   1        for(i=0; i<8; i++)
+ 112   1        {                                        //rtc write byte
+ 113   2          Bit =byte &(1<<i);
+ 114   2          send_bit(Bit);
+ 115   2          SCLK_Pulse();
+ 116   2        }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 3   
+
+ 117   1      }
+ 118          
+ 119          
+ 120          unsigned char read_byte(unsigned char cmd)
+ 121          {
+ 122   1        unsigned int j,dat=0;
+ 123   1        write_byte(cmd);
+ 124   1        for(j=0; j<8; j++)
+ 125   1        {
+ 126   2          dat>>=1;
+ 127   2          if(DS1302_IO)
+ 128   2          {
+ 129   3            dat|=0x80;
+ 130   3          }
+ 131   2          else
+ 132   2          {
+ 133   3            dat&=0x7F;
+ 134   3          }
+ 135   2          SCLK_Pulse();
+ 136   2        }
+ 137   1        return dat;
+ 138   1      }
+ 139          
+ 140          
+ 141          void DS1302_writebyte(unsigned char cmd, unsigned char value)
+ 142          {
+ 143   1        DS1302_CE=1;
+ 144   1        write_byte(cmd);                      //rtc write byte at address
+ 145   1        write_byte(value);
+ 146   1        DS1302_CE=0;
+ 147   1      }
+ 148          
+ 149          
+ 150          void DS1302_readbyte()
+ 151          {
+ 152   1        unsigned int dat=0,i,j;
+ 153   1        DS1302_CE=1;
+ 154   1        
+ 155   1        write_byte(DS1302_READ_BURST);
+ 156   1        for(i=0; i<8; i++)           //store in array
+ 157   1        {
+ 158   2          dat=0;
+ 159   2          for(j=0; j<8; j++)         //bit by bit read
+ 160   2          {
+ 161   3            dat>>=1;
+ 162   3          if(DS1302_IO)
+ 163   3          {                                           //reading ta enable
+ 164   4            dat|=0x80;
+ 165   4          }
+ 166   3          else
+ 167   3          {
+ 168   4            dat&=0x7F;
+ 169   4          }
+ 170   3          SCLK_Pulse();
+ 171   3          }
+ 172   2          read_bytes[i]=dat;
+ 173   2        } 
+ 174   1        DS1302_CE=0;  
+ 175   1      }
+ 176          
+ 177          
+ 178          void DS1302_init()
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 4   
+
+ 179          {
+ 180   1        unsigned char r;
+ 181   1        DS1302_CE=0; 
+ 182   1        DS1302_CLK=0;
+ 183   1        DS1302_writebyte(DS1302_CONTROL,0x00);
+ 184   1        DS1302_writebyte(DS1302_CHARGER,0xAB);
+ 185   1        
+ 186   1        r=read_byte(DS1302_SECOND_READ);                
+ 187   1        if((r&DS1302_SECOND_READ)!=0)
+ 188   1          DS1302_writebyte(DS1302_SECOND,0);              //zarah value zero ka
+ 189   1      }
+ 190          
+ 191          void DS1302_settime(unsigned char hour, unsigned char minute, unsigned char second)
+ 192          {
+ 193   1        DS1302_writebyte(DS1302_SECOND,second);
+ 194   1        DS1302_writebyte(DS1302_MINUTE,minute);
+ 195   1        DS1302_writebyte(DS1302_HOUR,hour);
+ 196   1      
+ 197   1      }
+ 198          
+ 199          void lcd_display(unsigned char number)
+ 200          {
+ 201   1        lcd_char(((number>>4)&0x0F)+0x30); //ten
+ 202   1        lcd_char((number&0x0F)+0x30);   //unit
+ 203   1      }
+ 204          
+ 205          void DS1302_gettime(void)
+ 206          {
+ 207   1        lcd_set_cursor(0,0);
+ 208   1        
+ 209   1        lcd_set_cursor(0,6);
+ 210   1        lcd_display(read_bytes[2]);
+ 211   1        lcd_char(':');
+ 212   1        delay(10);
+ 213   1        
+ 214   1        
+ 215   1        lcd_set_cursor(0,9);
+ 216   1        lcd_display(read_bytes[1]);
+ 217   1        lcd_char(':');
+ 218   1        delay(10);
+ 219   1        
+ 220   1        lcd_set_cursor(0,12);
+ 221   1        lcd_display(read_bytes[0]);
+ 222   1        delay(10);
+ 223   1          
+ 224   1      }
+ 225          
+ 226          
+ 227          void main()
+ 228          {
+ 229   1        lcd_init();
+ 230   1        DS1302_init();
+ 231   1        UART_init();
+ 232   1          
+ 233   1        while(1)
+ 234   1        {    
+ 235   2           UART_receivedata();
+ 236   2           if(messagereceived)
+ 237   2           {
+ 238   3             if(receivedata=='n')
+ 239   3             {
+ 240   4               receivemsg[index]='\0';
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 5   
+
+ 241   4               if(receivemsg[0]=='t')
+ 242   4               {
+ 243   5               lcd_command(0x80);
+ 244   5               delay(1000);
+ 245   5              
+ 246   5               extract_time_set_rtc(&receivemsg[1]);
+ 247   5      
+ 248   5                 
+ 249   5                 while(1)
+ 250   5                 {
+ 251   6                    DS1302_CE=1;
+ 252   6                    DS1302_readbyte();
+ 253   6                    DS1302_CE=0;
+ 254   6                    DS1302_gettime();
+ 255   6                 }
+ 256   5              
+ 257   5              index=0;
+ 258   5               memset(receivemsg, 0, sizeof(receivemsg));
+ 259   5               messagereceived=0;
+ 260   5               }
+ 261   4               
+ 262   4             }
+ 263   3             else
+ 264   3             {
+ 265   4               receivemsg[index]=receivedata;
+ 266   4               index++;
+ 267   4             }
+ 268   3           }
+ 269   2           else
+ 270   2           {
+ 271   3             lcd_string("nodata");
+ 272   3           }
+ 273   2      
+ 274   2        }
+ 275   1      }
+ 276          
+ 277          
+ 278          
+ 279          
+ 280          
+ 281          
+ 282          
+ 283          
+ 284          
+ 285          
+ 286          
+ 287          
+ 288          
+ 289          
+ 290          
+ 291          
+ 292          //========================================================================================================
+             -================================================================
+ 293          
+ 294          
+ 295          //void DS1302_setdate(unsigned char day, unsigned char month, unsigned char year)
+ 296          //{
+ 297          //  DS1302_writebyte(DS1302_DATE,day);
+ 298          //  DS1302_writebyte(DS1302_MONTH,month);
+ 299          //  DS1302_writebyte(DS1302_YEAR,year);
+ 300          //}
+ 301          
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 6   
+
+ 302          //void DS1302_getdate(void)
+ 303          //{
+ 304          //  lcd_set_cursor(1,0);
+ 305          //  
+ 306          //  lcd_set_cursor(1,6);
+ 307          //  lcd_display(read_bytes[3]);
+ 308          //  lcd_char(':');
+ 309          //  delay(10);
+ 310          //  
+ 311          //  lcd_set_cursor(1,9);
+ 312          //  lcd_display(read_bytes[4]);
+ 313          //  lcd_char(':');
+ 314          //  delay(10);
+ 315          //  
+ 316          //  lcd_set_cursor(1,12);
+ 317          //  lcd_display(read_bytes[6]);
+ 318          //  delay(10);
+ 319          //}
+ 320          
+ 321          
+ 322          
+ 323          
+ 324          //void main()
+ 325          //{
+ 326          //    lcd_init();
+ 327          //    DS1302_init();
+ 328          //    UART_init();
+ 329          
+ 330          //    while(1)
+ 331          //    {
+ 332          //        UART_receivedata();
+ 333          //        if(messagereceived)
+ 334          //        {
+ 335          //            if(receivedata == 'n')
+ 336          //            {
+ 337          //                receivemsg[index] = '\0';
+ 338          //                if(receivemsg[0] == 't')
+ 339          //                {
+ 340          //                    lcd_command(0x80);
+ 341          //                    delay(1000);
+ 342          //                    extract_time_set_rtc(&receivemsg[1]);
+ 343          
+ 344          //                    while(1)
+ 345          //                    {
+ 346          //                        DS1302_CE = 1;
+ 347          //                        DS1302_readbyte();
+ 348          //                        DS1302_CE = 0;
+ 349          //                        DS1302_gettime();
+ 350          ////                        DS1302_getdate();  // Display the date along with the time
+ 351          //                    }
+ 352          
+ 353          //                    index = 0;
+ 354          //                    memset(receivemsg, 0, sizeof(receivemsg));
+ 355          //                    messagereceived = 0;
+ 356          //                }
+ 357          //                else if(receivemsg[0] == 'd')
+ 358          //                {
+ 359          //                    lcd_command(0x83);
+ 360          //                    delay(1000);
+ 361          //                    extract_date_set_rtc(&receivemsg[1]); // Handle date input
+ 362          //                    
+ 363          ////                    index = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 7   
+
+ 364          ////                    memset(receivemsg, 0, sizeof(receivemsg));
+ 365          ////                    messagereceived = 0;
+ 366          //                    DS1302_getdate();
+ 367          //                }
+ 368          //            }
+ 369          //            else
+ 370          //            {
+ 371          //                receivemsg[index] = receivedata;
+ 372          //                index++;
+ 373          //            }
+ 374          //        }
+ 375          //        else
+ 376          //        {
+ 377          //            lcd_string("nodata");
+ 378          //        }
+ 379          //    }
+ 380          //}
+ 381          
+ 382          
+ 383          
+ 384          
+ 385          
+ 386          
+ 387          
+ 388          
+ 389          
+ 390          
+ 391          
+ 392          
+ 393          //........................................................................................................
+             -...............................................................................
+ 394          
+ 395          
+ 396          
+ 397          
+ 398          
+ 399          
+ 400          // second code
+ 401          
+ 402          //#include <reg51.h>
+ 403          //#include "LCD.h"
+ 404          
+ 405          //sbit DS1302_IO=P3^4;
+ 406          //sbit DS1302_CE=P3^5;
+ 407          //sbit DS1302_CLK=P3^6;
+ 408          
+ 409          //#define DS1302_READ_BURST 0xBF
+ 410          //#define DS1302_WRITE_BURST 0xBE
+ 411          //#define DS1302_SECOND 0x80
+ 412          //#define DS1302_SECOND_READ 0x81
+ 413          //#define DS1302_MINUTE 0x82
+ 414          //#define DS1302_MINUTE_READ 0x83
+ 415          //#define DS1302_HOUR 0x84
+ 416          //#define DS1302_HOUR_READ 0x85
+ 417          //#define DS1302_DATE 0x86
+ 418          //#define DS1302_MONTH 0x88
+ 419          //#define DS1302_DAY 0x8A
+ 420          //#define DS1302_YEAR 0x8C
+ 421          //#define DS1302_CONTROL 0x8E
+ 422          //#define DS1302_CHARGER 0x90
+ 423          //#define DS1302_RAMBURST_READ 0xFF
+ 424          //#define DS1302_RAMBURST_WRITE 0xFE
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 8   
+
+ 425          //#define CLK_DELAY 10
+ 426          
+ 427          //void write_byte (unsigned int byte);
+ 428          //unsigned char read_byte(unsigned char cmd);
+ 429          //void DS1302_settime(unsigned char second, unsigned char minute, unsigned char hour);
+ 430          //void DS1302_setdate(unsigned char day,unsigned char month,unsigned char year);
+ 431          //void DS1302_gettime(void);
+ 432          //void DS1302_getdate(void);
+ 433          //void send_bit(unsigned int bitt);
+ 434          //void DS1302_init();
+ 435          //void DS1302_readbyte();
+ 436          
+ 437          //unsigned int read_bytes[12];
+ 438          
+ 439          //void SCLK_PULSE()
+ 440          //{
+ 441          //  DS1302_CLK=1;
+ 442          //  DS1302_CLK=0;
+ 443          //}
+ 444          //void send_bit(unsigned int bitt)
+ 445          //{
+ 446          //  if(bitt!=0)
+ 447          //  {
+ 448          //    DS1302_IO=1;
+ 449          //  }
+ 450          //  else
+ 451          //  {
+ 452          //    DS1302_IO=0;
+ 453          //  }
+ 454          //}
+ 455          //void write_byte(unsigned int byte)
+ 456          //{
+ 457          //  unsigned int i,Bit;
+ 458          //  for(i=0; i<8; i++)
+ 459          //  {
+ 460          //  Bit=byte&(1<<i);
+ 461          //  send_bit(Bit);
+ 462          //  SCLK_PULSE();
+ 463          //  }
+ 464          //}
+ 465          //unsigned char read_byte(unsigned char cmd)
+ 466          //{
+ 467          //  unsigned j,dat=0;
+ 468          //  write_byte(cmd);
+ 469          //  for(j=0; j<8; j++)
+ 470          //  {
+ 471          //    dat>>=1;
+ 472          //    if(DS1302_IO)
+ 473          //    {
+ 474          //        dat|=0x80;
+ 475          //    }
+ 476          //    else
+ 477          //    {
+ 478          //      dat&=0x7F;
+ 479          //    }
+ 480          //    SCLK_PULSE();
+ 481          //  }
+ 482          //  return dat;
+ 483          //}
+ 484          //void DS1302_writebyte(unsigned char cmd,unsigned char value)
+ 485          //{
+ 486          //  DS1302_CE=1;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 9   
+
+ 487          //  write_byte(cmd);
+ 488          //  write_byte(value);
+ 489          //  DS1302_CE=0;
+ 490          //}
+ 491          //void DS1302_readbyte()
+ 492          //{
+ 493          //  unsigned int i,j,dat=0;
+ 494          //  DS1302_CE=1;
+ 495          //  write_byte(DS1302_READ_BURST);
+ 496          //  for(i=0; i<8; i++);
+ 497          //  {
+ 498          //    dat=0;
+ 499          //    for(j=0; j<8; j++)
+ 500          //    {
+ 501          //      dat>>=1;
+ 502          //      if(DS1302_IO)
+ 503          //      {
+ 504          //        dat|=0x80;
+ 505          //      }
+ 506          //      else
+ 507          //      {
+ 508          //        dat&=0x7F;
+ 509          //      }
+ 510          //      SCLK_PULSE();
+ 511          //    }
+ 512          //    read_bytes[i]=dat;
+ 513          //  }
+ 514          //  DS1302_CE=0;
+ 515          //}
+ 516          //void DS1302_init()
+ 517          //{
+ 518          //  unsigned char r;
+ 519          //  DS1302_CE=0;
+ 520          //  DS1302_CLK=0;
+ 521          //  DS1302_writebyte(DS1302_CONTROL,0x00);
+ 522          //  DS1302_writebyte(DS1302_CHARGER,0xAB);
+ 523          //  
+ 524          //  r=read_byte(DS1302_SECOND_READ);
+ 525          //  if((r&DS1302_SECOND_READ)!=0)
+ 526          //  
+ 527          //     DS1302_writebyte(DS1302_SECOND,0);
+ 528          //  
+ 529          //}
+ 530          //void DS1302_settime(unsigned char hour, unsigned char minute, unsigned char second)
+ 531          //{
+ 532          //  DS1302_writebyte(DS1302_SECOND,second);
+ 533          //  DS1302_writebyte(DS1302_MINUTE,minute);
+ 534          //  DS1302_writebyte(DS1302_HOUR,hour);
+ 535          //}
+ 536          //void lcd_diplay(unsigned char number)
+ 537          //{
+ 538          //  lcd_char(((number>>4)&0x0F)+0x30);
+ 539          //  lcd_char((number&0x0F)+0x30);
+ 540          //}
+ 541          //void DS1302_gettime(void)
+ 542          //{
+ 543          //  lcd_set_cursor(0,0);
+ 544          //  lcd_string("TIME:");
+ 545          //  
+ 546          //  
+ 547          //  lcd_set_cursor(0,6);
+ 548          //  lcd_display(read_bytes[2]);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 10  
+
+ 549          //  lcd_char(':');
+ 550          //  delay(10);
+ 551          //  
+ 552          //    
+ 553          //  lcd_set_cursor(0,9);
+ 554          //  lcd_display(read_bytes[1]);
+ 555          //  lcd_char(':');
+ 556          //  delay(10);
+ 557          //  
+ 558          //    
+ 559          //  lcd_set_cursor(0,12);
+ 560          //  lcd_display(read_bytes[0]);
+ 561          //  lcd_char(':');
+ 562          //  delay(10);
+ 563          //}
+ 564          
+ 565          //void DS1302_setdate(unsigned char day,unsigned char month,unsigned char year)
+ 566          //{
+ 567          //  DS1302_writebyte(DS1302_DATE,day);
+ 568          //  DS1302_writebyte(DS1302_MONTH,month);
+ 569          //  DS1302_writebyte(DS1302_YEAR,year);
+ 570          
+ 571          //}
+ 572          
+ 573          //void DS1302_getdate(void)
+ 574          //{
+ 575          //  lcd_set_cursor(1,0);
+ 576          //  lcd_string("DATE:");
+ 577          //  
+ 578          //  
+ 579          //  lcd_set_cursor(1,6);
+ 580          //  lcd_display(read_bytes[3]);
+ 581          //  lcd_char(':');
+ 582          //  delay(10);
+ 583          //  
+ 584          //    
+ 585          //  lcd_set_cursor(1,9);
+ 586          //  lcd_display(read_bytes[4]);
+ 587          //  lcd_char(':');
+ 588          //  delay(10);
+ 589          //  
+ 590          //    
+ 591          //  lcd_set_cursor(1,12);
+ 592          //  lcd_display(read_bytes[6]);
+ 593          //  lcd_char(':');
+ 594          //  delay(10);
+ 595          //}
+ 596          //void main()
+ 597          //{
+ 598          //  DS1302_init();
+ 599          //  lcd_init();
+ 600          //  DS1302_settime(0x22,0x59,0x50);
+ 601          //  DS1302_setdate(0x31,0x12,0x23);
+ 602          //  while(1)
+ 603          //  {
+ 604          //    DS1302_CE=1;
+ 605          //    DS1302_readbyte();
+ 606          //    DS1302_CE=0;
+ 607          //    DS1302_gettime();
+ 608          //    DS1302_getdate();
+ 609          //  }
+ 610          //}
+C51 COMPILER V9.60.7.0   MAIN                                                              09/24/2024 15:31:02 PAGE 11  
+
+*** WARNING C294 IN LINE 257 OF main.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    662    ----
+   CONSTANT SIZE    =     64    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     47      19
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
