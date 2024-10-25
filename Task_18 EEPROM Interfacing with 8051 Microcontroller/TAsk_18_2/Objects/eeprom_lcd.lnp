@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\eeprom_lcd.obj" 
+TO ".\Objects\eeprom_lcd" 
+PRINT(".\Listings\eeprom_lcd.m51") RAMSIZE(256) 

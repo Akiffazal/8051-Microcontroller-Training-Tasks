@@ -1,0 +1,144 @@
+C51 COMPILER V9.60.7.0   I2C                                                               09/10/2024 12:09:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN .\Objects\I2C.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE I2C.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\I2C.l
+                    -st) TABS(2) OBJECT(.\Objects\I2C.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "I2C.h"
+   4          #include "24C02.h"
+   5          void delay1 (unsigned int T)
+   6          {
+   7   1        unsigned int i, j;
+   8   1        for(i=0; i<T; i++)
+   9   1        for(j=0; j<20; j++);
+  10   1      }
+  11          void INITI2C (void)
+  12          {
+  13   1        SDA=1;
+  14   1        SCL=1;
+  15   1      }
+  16          void I2C_START (void)
+  17          {
+  18   1        SET_SCL_HIGH;
+  19   1        SET_SDA_HIGH;
+  20   1        delay1(5);
+  21   1        SET_SDA_LOW;
+  22   1        delay1(5);
+  23   1      }
+  24          void I2C_RESTART (void)
+  25          {
+  26   1        SET_SCL_LOW;
+  27   1        delay1(5);
+  28   1        SET_SDA_HIGH;
+  29   1        delay1(5);
+  30   1        SET_SCL_HIGH;
+  31   1        delay1(5);
+  32   1        SET_SDA_LOW;
+  33   1        delay1(5);
+  34   1      }
+  35          void I2C_STOP (void)
+  36          {
+  37   1        SET_SCL_LOW;
+  38   1        delay1(5);
+  39   1        SET_SDA_LOW;
+  40   1        delay1(5);
+  41   1        SET_SCL_HIGH;
+  42   1        delay1(5);
+  43   1        SET_SDA_HIGH;
+  44   1        delay1(5);
+  45   1      }
+  46          void I2C_ACK (void)
+  47          {
+  48   1        SET_SCL_LOW;
+  49   1        delay1(10);
+  50   1        SET_SDA_LOW;
+  51   1        delay1(10);
+  52   1        SET_SCL_HIGH;
+  53   1        delay1(20);
+  54   1      }
+C51 COMPILER V9.60.7.0   I2C                                                               09/10/2024 12:09:46 PAGE 2   
+
+  55          void I2C_NACK(void)
+  56          {
+  57   1        SET_SCL_LOW;
+  58   1        delay1(10);
+  59   1        SET_SDA_HIGH;
+  60   1        delay1(10);
+  61   1        SET_SCL_HIGH;
+  62   1        delay1(20);
+  63   1      }
+  64          bit I2C_WRITE_BYTE(unsigned char Byte)
+  65          {
+  66   1        unsigned char i;
+  67   1        for(i=0; i<8; i++)
+  68   1        {
+  69   2          SET_SCL_LOW;
+  70   2          delay1(5);
+  71   2          if((Byte<<i)&0x80)
+  72   2          {
+  73   3            SET_SDA_HIGH;
+  74   3          }
+  75   2          else
+  76   2          {
+  77   3            SET_SDA_LOW;
+  78   3            delay1(5);
+  79   3          }
+  80   2          SET_SCL_HIGH;
+  81   2          delay1(5);
+  82   2          
+  83   2        }
+  84   1        SET_SCL_LOW;
+  85   1        SET_SDA_HIGH;
+  86   1        delay1(5);
+  87   1        SET_SCL_HIGH;
+  88   1        delay1(5);
+  89   1        return SDA;
+  90   1      }
+  91          
+  92          unsigned char I2C_READ_BYTE (void)
+  93          {
+  94   1        unsigned char i,d,Rxdata=0;
+  95   1        for(i=0; i<8; i++)
+  96   1        {
+  97   2          SET_SCL_LOW;
+  98   2          SET_SDA_HIGH;
+  99   2          delay1(5);
+ 100   2          SET_SCL_HIGH;
+ 101   2          delay1(5);
+ 102   2          d=SDA;
+ 103   2          Rxdata=Rxdata|(d<<(7-i));
+ 104   2          delay1(5);
+ 105   2        }
+ 106   1          return Rxdata;
+ 107   1      }
+ 108          
+ 109          
+ 110          
+ 111          
+ 112          
+ 113          
+ 114          
+ 115          
+ 116          
+C51 COMPILER V9.60.7.0   I2C                                                               09/10/2024 12:09:46 PAGE 3   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    234    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

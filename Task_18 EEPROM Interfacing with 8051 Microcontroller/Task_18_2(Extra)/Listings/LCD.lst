@@ -1,0 +1,209 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 16:44:00 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <stdio.h>  // For sprintf function
+   3          #include "lcd.h"
+   4          
+   5          #define lcd_data P0
+   6          sbit RW=P2^5;
+   7          sbit RS=P2^6;
+   8          sbit EN=P2^7;
+   9          
+  10          void lcd_init()
+  11          {
+  12   1        lcd_command(0x38);
+  13   1        lcd_command(0x0C);
+  14   1        lcd_command(0x01);
+  15   1        lcd_command(0x80);
+  16   1      }
+  17          
+  18          void lcd_command(unsigned char cmd)
+  19          {
+  20   1        lcd_data=cmd;
+  21   1        RW=0;
+  22   1        RS=0;
+  23   1        EN=1;
+  24   1        delay(10);
+  25   1        EN=0;
+  26   1        delay(10);
+  27   1      }
+  28          void lcd_char(unsigned char dat)
+  29          {
+  30   1        lcd_data=dat;
+  31   1        RW=0;
+  32   1        RS=1;
+  33   1        EN=1;
+  34   1        delay(10);
+  35   1        EN=0;
+  36   1        delay(10);
+  37   1      }
+  38          
+  39          void lcd_clear()
+  40          {
+  41   1          lcd_command(0x01);
+  42   1      
+  43   1      }
+  44          
+  45          void lcd_string(unsigned char *str)
+  46          {
+  47   1        int i;
+  48   1        for(i=0; str[i]!=0; i++)
+  49   1        {
+  50   2          lcd_char(str[i]);
+  51   2        }
+  52   1        
+  53   1      }
+  54          void lcd_set_cursor(unsigned char row, unsigned char col)
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 16:44:00 PAGE 2   
+
+  55          {
+  56   1        unsigned char position;
+  57   1        if(row==0)
+  58   1        {
+  59   2          position=0x80+col;
+  60   2        }
+  61   1        else
+  62   1        {
+  63   2          position=0xC0+col;
+  64   2        }
+  65   1        lcd_command(position);
+  66   1      }
+  67          void lcd_display_long(unsigned long num)
+  68          {
+  69   1        
+  70   1        unsigned int i;
+  71   1        char str[12];
+  72   1        sprintf(str,"%lu",num);
+  73   1        
+  74   1        for(i=0; str[i]!='\0'; i++)
+  75   1        {
+  76   2          lcd_char(str[i]);
+  77   2          
+  78   2        }
+  79   1      }
+  80          
+  81          void delay (unsigned int time)
+  82          {
+  83   1        unsigned int i,j;
+  84   1        for(i=0; i<time; i++)
+  85   1        for(j=0; j<10; j++);
+  86   1        
+  87   1      }
+  88          
+  89          
+  90          
+  91          
+  92          
+  93          
+  94          
+  95          
+  96          
+  97          
+  98          
+  99          
+ 100          
+ 101          
+ 102          
+ 103          
+ 104          
+ 105          //#include "Includes.h"
+ 106          
+ 107          //void ToggleEpinOfLCD(void)
+ 108          //{
+ 109          //  E = 1;                // Give a pulse on E pin
+ 110          //  __delay_us(E_Delay);  // so that LCD can latch the
+ 111          //  E = 0;                // data from data bus
+ 112          //  __delay_us(E_Delay);  
+ 113          //}
+ 114          
+ 115          //void WriteDataToLCD(char t)
+ 116          //{
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 16:44:00 PAGE 3   
+
+ 117          //   RS = 1;             // This is data
+ 118          
+ 119          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 120          //   P0 |= (t&0xF0);     // Write Upper nibble of data
+ 121          //   ToggleEpinOfLCD();  // Toggle E pin to send data 
+ 122          
+ 123          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 124          //   P0 |= ((t<<4)&0xF0);// Write Lower nibble of data
+ 125          //   ToggleEpinOfLCD();  // Toggle E pin to send data 
+ 126          //}
+ 127          
+ 128          
+ 129          //void WriteCommandToLCD(int z)
+ 130          //{
+ 131          //   RS = 0;             // This is command
+ 132          
+ 133          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 134          //   P0 |= (z&0xF0);     // Write Upper nibble of data
+ 135          //   ToggleEpinOfLCD();  // Toggle E pin to send data 
+ 136          
+ 137          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 138          //   P0 |= ((z<<4)&0xF0);// Write Lower nibble of data
+ 139          //   ToggleEpinOfLCD();  // Toggle E pin to send data 
+ 140          //}
+ 141          
+ 142          //void InitLCD(void)
+ 143          //{
+ 144          //  RS = 0;     // Make pin zero
+ 145          //  E  = 0;     // Make Pin zero          
+ 146          
+ 147          //  ///////////// Reset process from datasheet /////////
+ 148          //     __delay_us(15000);
+ 149          
+ 150          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 151          //   P0 |= 0x30;         // Write 0x3
+ 152          //     ToggleEpinOfLCD();    // Toggle E pin to send data 
+ 153          
+ 154          //     __delay_us(4500);
+ 155          
+ 156          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 157          //   P0 |= 0x30;         // Write 0x3
+ 158          //     ToggleEpinOfLCD();    // Toggle E pin to send data 
+ 159          
+ 160          //     __delay_us(300);
+ 161          
+ 162          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 163          //   P0 |= 0x30;         // Write 0x3
+ 164          //     ToggleEpinOfLCD();    // Toggle E pin to send data 
+ 165          
+ 166          //     __delay_us(650);
+ 167          
+ 168          //   P0 &= 0x0F;       // Make P2.4 to P2.7 zero
+ 169          //   P0 |= 0x20;         // Write 0x2
+ 170          //     ToggleEpinOfLCD();    // Toggle E pin to send data 
+ 171          
+ 172          //   __delay_us(650);
+ 173          
+ 174          //  /////////////////////////////////////////////////////
+ 175          //   WriteCommandToLCD(0x28);    //function set
+ 176          //   WriteCommandToLCD(0x0c);    //display on,cursor off,blink off
+ 177          //   WriteCommandToLCD(0x01);    //clear display
+ 178          //   WriteCommandToLCD(0x06);    //entry mode, set increment
+C51 COMPILER V9.60.7.0   LCD                                                               09/24/2024 16:44:00 PAGE 4   
+
+ 179          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    216    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      20
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

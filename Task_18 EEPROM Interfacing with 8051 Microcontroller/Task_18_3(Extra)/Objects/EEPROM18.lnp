@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj",
+".\Objects\I2C.obj",
+".\Objects\24C02.obj" 
+TO ".\Objects\EEPROM18.2" 
+PRINT(".\Listings\EEPROM18.m51") RAMSIZE(256) 

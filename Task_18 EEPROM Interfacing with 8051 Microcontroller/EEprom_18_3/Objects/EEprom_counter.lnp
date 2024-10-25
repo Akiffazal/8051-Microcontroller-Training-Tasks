@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\EEprom_counter" 
+PRINT(".\Listings\EEprom_counter.m51") RAMSIZE(256) 
