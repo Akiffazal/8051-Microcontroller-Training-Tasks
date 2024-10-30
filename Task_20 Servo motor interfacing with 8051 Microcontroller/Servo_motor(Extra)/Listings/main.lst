@@ -1,0 +1,62 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/25/2024 14:54:35 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit motor_pin = P2^0;  // Define the motor control pin
+   4          
+   5          // Function to create a delay in microseconds (approximate)
+   6          void delay_us(unsigned int us)
+   7          {
+   8   1          unsigned int i;
+   9   1          while(us--)
+  10   1          {
+  11   2              for(i = 0; i < 12; i++);  // 1 machine cycle ~1 microsecond on 12 MHz clock
+  12   2          }
+  13   1      }
+  14          
+  15          // Function to generate a PWM signal with a specified high time (in microseconds)
+  16          void generate_pwm(unsigned int high_time_us)
+  17          {
+  18   1          // Set pin high for the specified high time
+  19   1          motor_pin = 1;
+  20   1          delay_us(high_time_us);  // High for high_time_us microseconds
+  21   1      
+  22   1          // Set pin low for the remaining period of the 20ms cycle
+  23   1          motor_pin = 0;
+  24   1          delay_us(20000 - high_time_us);  // Low for the rest of the 20ms period
+  25   1      }
+  26          
+  27          void main()
+  28          {
+  29   1          while(1)
+  30   1          {
+  31   2              // 0 degree: 0.5ms high time (500us)
+  32   2      //        generate_pwm(500);
+  33   2      
+  34   2              // Uncomment the below line to test 45 degrees
+  35   2              // 45 degree: 1ms high time (1000us)
+  36   2               generate_pwm(1000);
+  37   2          }
+  38   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     64    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

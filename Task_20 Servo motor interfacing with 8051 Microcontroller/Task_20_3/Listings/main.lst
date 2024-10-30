@@ -1,0 +1,187 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 12:07:20 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          sbit motor_pin= P2^0;
+   3          
+   4          
+   5          
+   6          //// 8 bit timer delay 0 degree
+   7          //unsigned int i;
+   8          
+   9          //void delay()
+  10          //  {
+  11          //    TMOD=0x02;
+  12          //    TH0=0xD1;
+  13          //    TR0=1;
+  14          //  }
+  15          
+  16          //void main()
+  17          //  {
+  18          //    while(1)
+  19          //    {
+  20          //    motor_pin=0;
+  21          //    for(i=0; i<945; i++)
+  22          //      {
+  23          //        delay();
+  24          //      }
+  25          //      motor_pin=1;
+  26          
+  27          //      for(i=0; i<23; i++)
+  28          //    {
+  29          //      delay();
+  30          //    }
+  31          //    }
+  32          //  }
+  33          
+  34          
+  35          
+  36            
+  37            
+  38          // TIMER DELAY 16 BIT MODE 1 45degree
+  39          
+  40          sbit led =P2^0;
+  41          unsigned int i=0;
+  42                                         
+  43          void delay()
+  44          {
+  45   1        TMOD=0x01;
+  46   1        TH0=0xFC;
+  47   1        TL0=0x65;
+  48   1        TR0=1;
+  49   1        while(TF0 == 0);
+  50   1        TF0=0;
+  51   1        TR0=0;
+  52   1      }
+  53          
+  54          
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 12:07:20 PAGE 2   
+
+  55          void main()
+  56          {
+  57   1        while(1)
+  58   1        {
+  59   2      
+  60   2        motor_pin=0;
+  61   2          for(i=0; i<19; i++)
+  62   2          {
+  63   3            delay();
+  64   3          }
+  65   2              motor_pin=1;
+  66   2          for(i=0; i<1; i++)
+  67   2          {
+  68   3            delay();
+  69   3          }
+  70   2        }
+  71   1      }
+  72          
+  73          
+  74          
+  75          
+  76          
+  77          //void delay (unsigned int );
+  78          
+  79          //void timer_init (unsigned int );
+  80          
+  81          //void main()
+  82          //{
+  83          
+  84          //  while(1)
+  85          //  {
+  86          //   motor_pin=0;
+  87          //    delay(19);
+  88          //    motor_pin=1;
+  89          //    delay(1);
+  90          //    }
+  91          //    
+  92          //  
+  93          //  }
+  94          //void delay (unsigned int time)
+  95          //{
+  96          //  unsigned int i,j;
+  97          //  for(i=0; i<time; i++)
+  98          //  for(j=0; j<116; j++);
+  99          //}
+ 100          
+ 101          
+ 102          
+ 103          
+ 104          
+ 105          
+ 106          
+ 107          
+ 108          
+ 109          
+ 110          
+ 111          
+ 112          
+ 113          
+ 114          
+ 115          
+ 116          
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 12:07:20 PAGE 3   
+
+ 117          
+ 118          
+ 119          
+ 120          
+ 121          
+ 122          
+ 123          
+ 124          
+ 125          //TIMER DELAY 8 BIT MODE 2    20ms
+ 126          //sbit led=P2^0;
+ 127          //unsigned int i;
+ 128          //void delay ();
+ 129          //void delay()
+ 130          //{
+ 131          //  TMOD=0x02;
+ 132          //  TH0=0xD1;
+ 133          //  TR0=1;
+ 134          
+ 135          //}
+ 136          
+ 137          //void main()
+ 138          //{
+ 139          //  while(1)
+ 140          //  {
+ 141          //    
+ 142          //    led=1;
+ 143          //  
+ 144          //    for(i=0; i<1000; i++)
+ 145          //    {
+ 146          //      delay();
+ 147          //    }
+ 148          //      led=0;
+ 149          //    
+ 150          //      for(i=0; i<1000; i++)
+ 151          //    {
+ 152          //      delay();
+ 153          //    }
+ 154          //  }
+ 155          //}
+ 156          
+ 157          
+ 158          
+ 159          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     77    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

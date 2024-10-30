@@ -1,0 +1,356 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          // Program to rotate servo to user defined angular position
+   2          
+   3          // 0 degree = 700us 
+   4          // 180 degree = 5500us
+   5          // Timer1 pulse after 50us  -23
+   6          
+   7          #include<reg51.h>
+   8          #define dataport P0  // Data port for LCD
+   9          #define key P1     // Port for Keypad
+  10          #define port P2
+  11          sbit output = port^0;
+  12          sbit rs = port^5;
+  13          sbit rw = port^6;
+  14          sbit en = port^7;
+  15          sbit col1 = key^4;
+  16          sbit col2 = key^5;
+  17          sbit col3 = key^6;
+  18          sbit row1 = key^0;
+  19          sbit row2 = key^1;
+  20          sbit row3 = key^2;
+  21          sbit row4 = key^3;
+  22          int count=0,time=0,check, digit[3];
+  23          void delay(unsigned int msec)       // Function for delay
+  24          {
+  25   1        int i,j;
+  26   1        for(i=0;i<msec;i++)
+  27   1          for(j=0;j<1275;j++);
+  28   1      } 
+  29          
+  30          void lcd_cmd(unsigned char item)    // Function to send command to LCD
+  31          {
+  32   1        dataport = item;
+  33   1        rs= 0;
+  34   1        rw=0;
+  35   1        en=1;
+  36   1        delay(1);
+  37   1        en=0;
+  38   1        return;
+  39   1      } 
+  40          
+  41          void lcd_data(unsigned char item)   // Function to send one byte data to LCD
+  42          {
+  43   1        dataport = item;
+  44   1        rs= 1;
+  45   1        rw=0;
+  46   1        en=1;
+  47   1        delay(1);
+  48   1        en=0;
+  49   1        return;
+  50   1      }
+  51          
+  52          void lcd_data_string(unsigned char *str)  // Function to send string to LCD
+  53          {
+  54   1        int i=0;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 2   
+
+  55   1        while(str[i]!="")
+  56   1        {
+  57   2          lcd_data(str[i]);
+  58   2          i++;
+  59   2          delay(10);
+  60   2        }
+  61   1        return; 
+  62   1      }
+  63          
+  64          lcd_data_int(int time_val)      // Function to send three digit number
+  65          {
+  66   1        int int_amt;
+  67   1        int_amt = time_val/100;
+  68   1        lcd_data(int_amt+48);
+  69   1        time_val = time_val%100;
+  70   1        int_amt = time_val/10;
+  71   1        lcd_data(int_amt+48);
+  72   1        int_amt = time_val%10;   
+  73   1        lcd_data(int_amt+48);
+  74   1      }
+  75          
+  76          void shape()           // Function to make degree sign
+  77          {
+  78   1        lcd_cmd(64);
+  79   1        lcd_data(2);
+  80   1        lcd_data(5);
+  81   1        lcd_data(2);
+  82   1        lcd_data(0);
+  83   1        lcd_data(0);
+  84   1        lcd_data(0);
+  85   1        lcd_data(0);
+  86   1        lcd_data(0);
+  87   1      }
+  88          
+  89          void timer(int msec)           // Function to produce pulse as defined by user
+  90          {
+  91   1        int i;
+  92   1        TR1=1;
+  93   1        for(i=0;i<msec;i++)
+  94   1        {
+  95   2          while(TF1==0);
+  96   2          TF1=0;
+  97   2        }
+  98   1        TR1=0;
+  99   1      }
+ 100          
+ 101          void digit_set(int num)     
+ 102          {
+ 103   1        if(count==4)
+ 104   1        {
+ 105   2          lcd_cmd(0x01);
+ 106   2          lcd_data_string("done");
+ 107   2          check=num;
+ 108   2        }
+ 109   1        else
+ 110   1        {
+ 111   2          check=0;
+ 112   2          if(count==1)
+ 113   2            digit[0]=num;
+ 114   2          else
+ 115   2          {
+ 116   3            if(count==2)
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 3   
+
+ 117   3            {
+ 118   4              digit[1]=digit[0];
+ 119   4              digit[0]=num; 
+ 120   4            }
+ 121   3            else
+ 122   3              if(count==3)
+ 123   3              {
+ 124   4                digit[2]=digit[1];
+ 125   4                digit[1]=digit[0];
+ 126   4                digit[0]=num;
+ 127   4              }
+ 128   3          }
+ 129   2          lcd_data((num+48));
+ 130   2        }
+ 131   1      }
+ 132          
+ 133          void check_col1()    // Col1 check
+ 134          {
+ 135   1        row1=row2=row3=row4=1;
+ 136   1        row1=0;
+ 137   1        if(col1==0)         // Key 1
+ 138   1        {  
+ 139   2          delay(10);
+ 140   2          count=count+1;
+ 141   2          digit_set(1);
+ 142   2        }
+ 143   1        row1=1;
+ 144   1        row2=0;
+ 145   1        if(col1==0)         // Key 4
+ 146   1        {
+ 147   2          delay(10);
+ 148   2          count=count+1;
+ 149   2          digit_set(4);
+ 150   2        }
+ 151   1        row2=1;
+ 152   1        row3=0;
+ 153   1        if(col1==0)           // Key 7
+ 154   1        { 
+ 155   2          delay(10);
+ 156   2          count=count+1;
+ 157   2          digit_set(7);
+ 158   2        }
+ 159   1        row3=1;
+ 160   1        row4=0;
+ 161   1        if(col1==0)         // Key *
+ 162   1        { 
+ 163   2          delay(10);
+ 164   2          count=count+1;
+ 165   2          if(count==4)
+ 166   2          {
+ 167   3            digit_set(10);
+ 168   3          }
+ 169   2          else
+ 170   2          {
+ 171   3            count=4;
+ 172   3            digit_set(10);
+ 173   3          }
+ 174   2        }
+ 175   1        row4=1;
+ 176   1      }
+ 177          
+ 178          void check_col2()     //Col2 check
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 4   
+
+ 179          {
+ 180   1        row1=row2=row3=row4=1;
+ 181   1        row1=0;
+ 182   1        if(col2==0)         // Key 2
+ 183   1        {
+ 184   2          delay(10);
+ 185   2          count=count+1;
+ 186   2          digit_set(2);
+ 187   2        }
+ 188   1        row1=1;
+ 189   1        row2=0;
+ 190   1        if(col2==0)         // Key 5
+ 191   1        {
+ 192   2          delay(10);
+ 193   2          count=count+1;
+ 194   2          digit_set(5);
+ 195   2        }
+ 196   1        row2=1;
+ 197   1        row3=0;
+ 198   1        if(col2==0)               // Key 8
+ 199   1        {
+ 200   2          delay(10);
+ 201   2          count=count+1;
+ 202   2          digit_set(8);
+ 203   2        }
+ 204   1        row3=1;
+ 205   1        row4=0;
+ 206   1        if(col2==0)         // Key 0
+ 207   1        {
+ 208   2          delay(10);
+ 209   2          count=count+1;
+ 210   2          digit_set(0);
+ 211   2        }
+ 212   1        row4=1;
+ 213   1      }
+ 214          
+ 215          void check_col3()  // Col3 check
+ 216          {
+ 217   1        row1=row2=row3=row4=1;
+ 218   1        row1=0;
+ 219   1        if(col3==0)         // Key 3
+ 220   1        {
+ 221   2          delay(10);
+ 222   2          count=count+1;
+ 223   2          digit_set(3);
+ 224   2        }
+ 225   1        row1=1;
+ 226   1        row2=0;
+ 227   1        if(col3==0)           // Key 6
+ 228   1        {
+ 229   2          delay(10);
+ 230   2          count=count+1;
+ 231   2          digit_set(6);
+ 232   2        }
+ 233   1        row2=1;
+ 234   1        row3=0;
+ 235   1        if(col3==0)           // Key 9
+ 236   1        {
+ 237   2          delay(10);
+ 238   2          count=count+1;
+ 239   2          digit_set(9);
+ 240   2        }
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 5   
+
+ 241   1        row3=1;
+ 242   1        row4=0;
+ 243   1        if(col3==0)         // Key #
+ 244   1        {
+ 245   2          delay(10);
+ 246   2          count=count+1;
+ 247   2          lcd_data_string("wrong data");
+ 248   2          lcd_cmd(0x01);
+ 249   2          lcd_data_string("enter degree:");
+ 250   2          lcd_cmd(0xc5);
+ 251   2          count=0;
+ 252   2        }
+ 253   1        row4=1;
+ 254   1      }
+ 255          
+ 256          void keypad()
+ 257          { 
+ 258   1        if(col1==0)
+ 259   1          check_col1();
+ 260   1        else
+ 261   1          if(col2==0)
+ 262   1            check_col2();
+ 263   1          else
+ 264   1            if(col3==0)
+ 265   1              check_col3();
+ 266   1        delay(10);
+ 267   1      }
+ 268          
+ 269          void main()
+ 270          {
+ 271   1        int i;
+ 272   1        col1=col2=col3=1;
+ 273   1        TMOD=0x20;    // MODE2
+ 274   1        TH1= -23;   // 50 usec timer
+ 275   1        shape();
+ 276   1        output=0;
+ 277   1      
+ 278   1        lcd_cmd(0x38);
+ 279   1        lcd_cmd(0x0e);
+ 280   1        lcd_cmd(0x01);
+ 281   1        delay(100);
+ 282   1        while(1)
+ 283   1        { 
+ 284   2          count=0;
+ 285   2          lcd_cmd(0x01);
+ 286   2          lcd_data_string("enter degree:");
+ 287   2          lcd_cmd(0xc5);
+ 288   2          check=0;
+ 289   2          digit[0]=0;
+ 290   2          digit[1]=0;
+ 291   2          digit[2]=0;
+ 292   2          while(check!=10)
+ 293   2          {
+ 294   3            row1=row2=row3=row4=0;
+ 295   3            while(col1==1 && col2==1 && col3==1);
+ 296   3            keypad();
+ 297   3          }
+ 298   2          time=(digit[0]+(digit[1]*10)+(digit[2]*100));
+ 299   2          lcd_cmd(0xc4);
+ 300   2          time=time%180;
+ 301   2          lcd_data_int(time);
+ 302   2          lcd_data(0);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/16/2024 16:49:06 PAGE 6   
+
+ 303   2          time= time*0.5;     // (110-14)/180=0.53
+ 304   2          for(i=0;i<200;i++)
+ 305   2          {
+ 306   3            output=1;
+ 307   3            timer(14);  
+ 308   3            output=0;
+ 309   3            timer(360);
+ 310   3          }
+ 311   2          delay(100);
+ 312   2          for(i=0;i<200;i++)
+ 313   2          {
+ 314   3            output=1;
+ 315   3            timer(time+14); 
+ 316   3            output=0;
+ 317   3            timer(360);
+ 318   3          }
+ 319   2          timer(3000000);
+ 320   2        }
+ 321   1      } 
+*** WARNING C290 IN LINE 74 OF main.c: missing return value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1023    ----
+   CONSTANT SIZE    =     31    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

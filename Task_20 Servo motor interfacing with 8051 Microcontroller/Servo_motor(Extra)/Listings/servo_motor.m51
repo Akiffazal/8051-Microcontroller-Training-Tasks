@@ -1,0 +1,101 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/25/2024  14:54:35  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\servo_motor PRINT (.\Listings\servo_motor.m51) RAMSIZE (256)
+>> 
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\servo_motor (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     001EH     UNIT         ?PR?_DELAY_US?MAIN
+            CODE    0021H     0019H     UNIT         ?PR?_GENERATE_PWM?MAIN
+            CODE    003AH     000CH     UNIT         ?C_C51STARTUP
+            CODE    0046H     0009H     UNIT         ?PR?MAIN?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\servo_motor (MAIN)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN
+  +--> ?PR?_GENERATE_PWM?MAIN
+
+?PR?_GENERATE_PWM?MAIN
+  +--> ?PR?_DELAY_US?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\servo_motor (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:0021H         PUBLIC        _generate_pwm
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/25/2024  14:54:35  PAGE 2
+
+
+  C:0046H         PUBLIC        main
+  C:0003H         PUBLIC        _delay_us
+  B:00A0H.0       PUBLIC        motor_pin
+  -------         PROC          _DELAY_US
+  D:0006H         SYMBOL        us
+  -------         DO            
+  D:0004H         SYMBOL        i
+  -------         ENDDO         
+  C:0003H         LINE#         6
+  C:0003H         LINE#         7
+  C:0003H         LINE#         9
+  C:000DH         LINE#         10
+  C:000DH         LINE#         11
+  C:0020H         LINE#         12
+  C:0020H         LINE#         13
+  -------         ENDPROC       _DELAY_US
+  -------         PROC          _GENERATE_PWM
+  D:0082H         SYMBOL        high_time_us
+  C:0021H         LINE#         16
+  C:0025H         LINE#         17
+  C:0025H         LINE#         19
+  C:0027H         LINE#         20
+  C:002AH         LINE#         23
+  C:002CH         LINE#         24
+  -------         ENDPROC       _GENERATE_PWM
+  -------         PROC          MAIN
+  C:0046H         LINE#         27
+  C:0046H         LINE#         28
+  C:0046H         LINE#         29
+  C:0046H         LINE#         30
+  C:0046H         LINE#         36
+  C:004DH         LINE#         37
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+Program Size: data=9.0 xdata=0 code=79
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

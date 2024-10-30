@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\servo_motor" 
+PRINT(".\Listings\servo_motor.m51") RAMSIZE(256) 
