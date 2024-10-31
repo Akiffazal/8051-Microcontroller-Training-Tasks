@@ -1,0 +1,182 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 12:20:38 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include <string.h>
+   4          
+   5          #define lcd_data P0
+   6          sbit RW=P2^5;
+   7          sbit RS=P2^6;
+   8          sbit EN=P2^7;
+   9          
+  10          void lcd_init()
+  11          {
+  12   1        lcd_command(0x38);
+  13   1        lcd_command(0x0C);
+  14   1        lcd_command(0x01);
+  15   1        lcd_command(0x80);
+  16   1      }
+  17          
+  18          void lcd_command(unsigned char cmd)
+  19          {
+  20   1        lcd_data=cmd;
+  21   1        RW=0;
+  22   1        RS=0;
+  23   1        EN=1;
+  24   1        delay(10);
+  25   1        EN=0;
+  26   1        delay(10);
+  27   1      }
+  28          void lcd_char(unsigned char dat)
+  29          {
+  30   1        lcd_data=dat;
+  31   1        RW=0;
+  32   1        RS=1;
+  33   1        EN=1;
+  34   1        delay(10);
+  35   1        EN=0;
+  36   1        delay(10);
+  37   1      }
+  38          void lcd_string(unsigned char *str)
+  39          {
+  40   1        int i;
+  41   1        for(i=0; str[i]!=0; i++)
+  42   1        {
+  43   2          lcd_char(str[i]);
+  44   2        }
+  45   1        
+  46   1      }
+  47          void lcd_set_cursor(unsigned char row, unsigned char col)
+  48          {
+  49   1        unsigned char position;
+  50   1        if(row==0)
+  51   1        {
+  52   2          position=0x80+col;
+  53   2        }
+  54   1        else
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 12:20:38 PAGE 2   
+
+  55   1        {
+  56   2          position=0xC0+col;
+  57   2        }
+  58   1        lcd_command(position);
+  59   1      }
+  60          
+  61          void delay (unsigned int time)
+  62          {
+  63   1        unsigned int i,j;
+  64   1        for(i=0; i<time; i++)
+  65   1        for(j=0; j<112; j++);
+  66   1        
+  67   1      }
+  68          void   Timmer_Delay (unsigned char k)
+  69          {
+  70   1        unsigned int j;
+  71   1        for(j=0; j<k; j++)
+  72   1        {
+  73   2        TH1=0x4B;
+  74   2        TL1=0xFD;                  //50ms
+  75   2        TF1=0;
+  76   2        TR1=1;
+  77   2        while(TF1==0);
+  78   2        TF1=0;
+  79   2        TR1=0;
+  80   2        }
+  81   1      }
+  82          void Delay1 (unsigned int value)
+  83          {
+  84   1        unsigned int j;
+  85   1        for(j=0; j<value; j++)
+  86   1        {
+  87   2          TH0=0xFC;
+  88   2          TL0=0x64;
+  89   2          TF0=0;
+  90   2          TR0=1;
+  91   2          
+  92   2          while(TF0==0);
+  93   2          TF0=0;
+  94   2          TR0=0;
+  95   2          
+  96   2        }
+  97   1      }
+  98          
+  99          void lcd_clear()
+ 100          {
+ 101   1        lcd_command(0x01);
+ 102   1      }
+ 103          
+ 104          
+ 105          
+ 106          int lcd_pow (int X, int Y)
+ 107          {
+ 108   1        unsigned char i;
+ 109   1        int result=1;
+ 110   1        
+ 111   1        for(i=0; i<Y; i++)
+ 112   1        {
+ 113   2          result*=X;
+ 114   2        }
+ 115   1        return result;  
+ 116   1      }
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 12:20:38 PAGE 3   
+
+ 117          
+ 118          void lcd_shownum(unsigned char line, unsigned char column, int number, unsigned char length)
+ 119          {
+ 120   1        unsigned char i;
+ 121   1        lcd_set_cursor(line,column);
+ 122   1        for(i=length; i>0; i--)
+ 123   1        {
+ 124   2          lcd_char(number/lcd_pow(10,i-1)%10+'0');
+ 125   2        }
+ 126   1      }
+ 127          void lcd_showchar(unsigned char line, unsigned char column, char Char)
+ 128          {
+ 129   1        lcd_set_cursor(line,column);
+ 130   1        lcd_char(Char);
+ 131   1      }
+ 132          void lcd_showstring(unsigned char line, unsigned char column, char *string)
+ 133          {
+ 134   1        unsigned char i;
+ 135   1        lcd_set_cursor(line,column);
+ 136   1        for(i=0; string[i]!='\0'; i++)
+ 137   1        lcd_char(string[i]);
+ 138   1      }
+ 139          
+ 140          
+ 141          
+ 142          
+ 143          
+ 144          
+ 145          
+ 146          
+ 147          
+ 148          
+ 149          
+ 150          
+ 151          
+ 152          
+ 153          
+ 154          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    387    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
