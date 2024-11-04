@@ -1,0 +1,137 @@
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:27:48 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\ADC.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ADC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ADC.l
+                    -st) TABS(2) OBJECT(.\Objects\ADC.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "ADC.h"
+   4          #include "math.h"
+   5          
+   6          sbit DIN =P3^4;
+   7          sbit CS  =P3^5;
+   8          sbit DCLK=P3^6;
+   9          sbit DOUT=P3^7;
+  10          sbit BP=P1^5;
+  11          
+  12          unsigned char ADC_Driver (bit A0, bit A1, bit A2)
+  13          {
+  14   1        unsigned char i, temp=0;
+  15   1        DCLK=0;
+  16   1        CS=0;
+  17   1        
+  18   1        DCLK=0;    DIN=1;     DCLK=1; 
+  19   1        DCLK=0;    DIN=A2;     DCLK=1;
+  20   1        DCLK=0;    DIN=A1;     DCLK=1;
+  21   1        DCLK=0;    DIN=A0;     DCLK=1;
+  22   1        DCLK=0;    DIN=1;     DCLK=1; 
+  23   1        DCLK=0;    DIN=1;     DCLK=1;
+  24   1        DCLK=0;    DIN=1;     DCLK=1;
+  25   1        DCLK=0;    DIN=1;     DCLK=1;
+  26   1        
+  27   1        DCLK = 0;
+  28   1        Delay1(10);
+  29   1        
+  30   1        
+  31   1        for(i=0; i<=7; i++)
+  32   1        {
+  33   2          temp<<=1;
+  34   2          DCLK=1;
+  35   2          DCLK=0;
+  36   2          
+  37   2          
+  38   2          temp|=DOUT;
+  39   2          
+  40   2      
+  41   2        }
+  42   1        CS=1;
+  43   1        return temp;
+  44   1      }
+  45          float ADC_Voltage ()
+  46          {
+  47   1        unsigned int value;
+  48   1        float voltage;
+  49   1        value= ADC_Driver(1,0,0);
+  50   1        voltage= value *(5.0 /255.0);
+  51   1        Delay1(1000);
+  52   1        return voltage;
+  53   1        
+  54   1      }
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:27:48 PAGE 2   
+
+  55          float ADC_Temperature ()
+  56          {
+  57   1        unsigned int temp_value;
+  58   1        float T, Temperature;
+  59   1        temp_value = ADC_Driver(1,0,1);
+  60   1        
+  61   1        T =1/((1/298.15)+((1/3380.0) *log((255.0/temp_value)-1)));
+  62   1        Temperature= T-273.15;
+  63   1        lcd_showstring(0,10,"Temp: ");
+  64   1        lcd_shownum(1,10,(unsigned int)Temperature,2);
+  65   1        lcd_showchar(1,12,'.');
+  66   1        lcd_shownum(1,13,(unsigned int)(Temperature *1000)%1000,3);
+  67   1      //  lcd_showchar(1,6,'C');
+  68   1        Delay1(1000);
+  69   1        return Temperature;
+  70   1      } 
+  71          
+  72          float Set_temp()
+  73          {
+  74   1        float Set_Temp,voltage1;
+  75   1        voltage1=ADC_Voltage();
+  76   1        Set_Temp=(40.0*voltage1)/5.0;
+  77   1        lcd_showstring(0,0,"SetTemp ");
+  78   1        lcd_shownum(1,0,Set_Temp,2);
+  79   1        lcd_showchar(1,2,'.');
+  80   1        lcd_shownum(1,3,(unsigned int)(Set_Temp* 1000) % 1000, 3);
+  81   1        
+  82   1        return Set_Temp;
+  83   1      }
+  84          void Beep ()
+  85          {
+  86   1        unsigned char i;
+  87   1        for(i=0; i<200; i++)
+  88   1        {
+  89   2          BP=0;
+  90   2          Delay1(16);
+  91   2          BP=1;
+  92   2          Delay1(16);
+  93   2        }
+  94   1      }
+  95          
+  96          
+  97          
+  98          
+  99          
+ 100          
+ 101          
+ 102          
+ 103          
+ 104          
+ 105          
+ 106          
+ 107          
+ 108          
+ 109          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    555    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:27:48 PAGE 3   
+
+   DATA SIZE        =   ----      22
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

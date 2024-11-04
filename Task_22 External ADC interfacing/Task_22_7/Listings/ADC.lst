@@ -1,0 +1,146 @@
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:39:49 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\ADC.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ADC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ADC.l
+                    -st) TABS(2) OBJECT(.\Objects\ADC.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "ADC.h"
+   4          #include "math.h"
+   5          
+   6          sbit DIN =P3^4;
+   7          sbit CS  =P3^5;
+   8          sbit DCLK=P3^6;
+   9          sbit DOUT=P3^7;
+  10          sbit LED =P2^0;
+  11          unsigned char ADC_Driver (bit A0, bit A1, bit A2)
+  12          {
+  13   1        unsigned char i, temp=0;
+  14   1        DCLK=0;
+  15   1        CS=0;
+  16   1        
+  17   1        DCLK=0;    DIN=1;     DCLK=1; 
+  18   1        DCLK=0;    DIN=A2;     DCLK=1;
+  19   1        DCLK=0;    DIN=A1;     DCLK=1;
+  20   1        DCLK=0;    DIN=A0;     DCLK=1;
+  21   1        DCLK=0;    DIN=1;     DCLK=1; 
+  22   1        DCLK=0;    DIN=1;     DCLK=1;
+  23   1        DCLK=0;    DIN=1;     DCLK=1;
+  24   1        DCLK=0;    DIN=1;     DCLK=1;
+  25   1        
+  26   1        DCLK = 0;
+  27   1        Delay1(10);
+  28   1        
+  29   1        
+  30   1        for(i=0; i<=7; i++)
+  31   1        {
+  32   2          temp<<=1;
+  33   2          DCLK=1;
+  34   2          DCLK=0;
+  35   2          
+  36   2          
+  37   2          temp|=DOUT;
+  38   2          
+  39   2      
+  40   2        }
+  41   1        CS=1;
+  42   1        return temp;
+  43   1      }
+  44          float ADC_Voltage ()
+  45          {
+  46   1        unsigned int value;
+  47   1        float voltage;
+  48   1        value = ADC_Driver(1,0,0);
+  49   1        
+  50   1        voltage =value*(5.0/255.0);
+  51   1        lcd_showstring(0,0,"V:");
+  52   1        lcd_shownum(0,3,(unsigned int)voltage,1);
+  53   1        lcd_showchar(0,4,'.');
+  54   1        lcd_shownum(0,5,(unsigned int)(voltage*1000)%1000,3);
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:39:49 PAGE 2   
+
+  55   1      //  lcd_showchar(1,6,'V');
+  56   1        Delay1(1000);
+  57   1        return voltage;
+  58   1      } 
+  59          
+  60          unsigned int LDR ()
+  61          {
+  62   1        unsigned int value, scaledvalue;
+  63   1        value = ADC_Driver(0,1,0);
+  64   1        scaledvalue =(value*100)/255;
+  65   1        
+  66   1        lcd_showstring(0,9,"LDR");
+  67   1        lcd_shownum(0,13,scaledvalue,3);
+  68   1        Delay1(1000);
+  69   1        return scaledvalue;
+  70   1      }
+  71          void contactor ()
+  72          {
+  73   1        float  voltage_value;
+  74   1        unsigned int LDR_value;
+  75   1        
+  76   1        voltage_value=ADC_Voltage();
+  77   1        Delay1(1000);
+  78   1        LDR_value = LDR();
+  79   1        Delay1(1000);
+  80   1        if(LDR_value<30)
+  81   1        {
+  82   2          if(voltage_value>=4)
+  83   2          {
+  84   3            lcd_clear_secondline();
+  85   3            lcd_showstring(1,0,"WAPDA SUPPLY ON");
+  86   3            LED=1;
+  87   3            Delay1(1000);
+  88   3          }
+  89   2          else
+  90   2          {
+  91   3            lcd_clear_secondline();
+  92   3            lcd_showstring(1,0,"REMOVEHEAVY LOAD");
+  93   3            LED=0;
+  94   3            Delay1(1000);
+  95   3          }
+  96   2        }
+  97   1        else
+  98   1        {
+  99   2          lcd_clear_secondline();
+ 100   2          lcd_showstring(1,0,"Enjoy Day solar");
+ 101   2          Delay1(1000);
+ 102   2        }
+ 103   1      }
+ 104          
+ 105          
+ 106          
+ 107          
+ 108          
+ 109          
+ 110          
+ 111          
+ 112          
+ 113          
+ 114          
+ 115          
+ 116          
+C51 COMPILER V9.60.7.0   ADC                                                               09/19/2024 15:39:49 PAGE 3   
+
+ 117          
+ 118          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    431    ----
+   CONSTANT SIZE    =     56    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      13
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
