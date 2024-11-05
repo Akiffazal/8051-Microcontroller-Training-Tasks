@@ -1,0 +1,187 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:56:27 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          
+   2          # include <reg52.h>
+   3          # include "LCD.h"
+   4          # include "KeyController.h"
+   5          # include "ADC.h"
+   6          
+   7          
+   8          #define LCD_DATAPORT P0                     
+   9          sbit RW=P2^5;                                    
+  10          sbit RS=P2^6;                                    
+  11          sbit EN=P2^7;                                    
+  12          
+  13          sbit DB4=P0^4;                               
+  14          sbit DB5=P0^5;
+  15          sbit DB6=P0^6;
+  16          sbit DB7=P0^7;
+  17          
+  18          void Delay (unsigned int value)       
+  19          {
+  20   1       unsigned int j;
+  21   1           
+  22   1        for (j=0; j<value ;j++)
+  23   1        {  
+  24   2          
+  25   2          TH1=0xFC;
+  26   2          TL1=0x19;
+  27   2          TF1=0;
+  28   2          TR1=1;
+  29   2          while(TF1==0);
+  30   2          TF1=0;
+  31   2          TR1=0;
+  32   2        }
+  33   1      }
+  34          
+  35            
+  36          
+  37          
+  38          void LCD4_write ( unsigned char Value)
+  39            {  
+  40   1          
+  41   1          
+  42   1          DB4=0x10 & Value;                    
+  43   1          DB5=0x20 & Value;          
+  44   1          DB6=0x40 & Value;              
+  45   1          DB7=0x80 & Value;             
+  46   1                          
+  47   1          EN=1;                       
+  48   1          Delay(5);                
+  49   1          EN=0;                       
+  50   1         
+  51   1        }
+  52            
+  53          
+  54          void LCD_Command (unsigned char cmd)
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:56:27 PAGE 2   
+
+  55          { 
+  56   1        RS=0;                          
+  57   1        RW=0;                           
+  58   1        LCD4_write(cmd & 0xF0);         
+  59   1        LCD4_write( cmd <<4 );          
+  60   1      }
+  61          
+  62          void LCD_Data (unsigned char Data)
+  63          { 
+  64   1        RS=1;                          
+  65   1        RW=0;                          
+  66   1        LCD4_write ( Data & 0xF0);
+  67   1        LCD4_write (Data <<4 );
+  68   1        
+  69   1      }
+  70          
+  71          
+  72          
+  73          void String_data (unsigned char *p)                
+  74          {
+  75   1        
+  76   1        while(*p)                                        
+  77   1        {
+  78   2          LCD_Data(*p++);                              
+  79   2        }
+  80   1      
+  81   1      }
+  82          
+  83          void LCD_Intialization(void)
+  84          {  
+  85   1                                                 
+  86   1         Delay(100);
+  87   1          LCD_Command(0x02); 
+  88   1      
+  89   1         LCD_Command(0x28);
+  90   1        
+  91   1      
+  92   1         LCD_Command(0x0C);  
+  93   1        
+  94   1         LCD_Command(0x01); 
+  95   1          Delay(10);
+  96   1      
+  97   1         LCD_Command(0x80);  
+  98   1          Delay(10);
+  99   1      
+ 100   1      }
+ 101          
+ 102          
+ 103          
+ 104           void Set_cursor(int row, int coloum)
+ 105           {      
+ 106   1         if(row==1)                                        
+ 107   1            {   LCD_Command(0x80+coloum); }               
+ 108   1            else if(row==2)                                  
+ 109   1            {   LCD_Command(0xC0+coloum); }                  
+ 110   1       
+ 111   1       
+ 112   1       }
+ 113          
+ 114           
+ 115           
+ 116           int lcd_Pow(int X,int Y)
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:56:27 PAGE 3   
+
+ 117          {
+ 118   1        unsigned char i;
+ 119   1        int Result=1;
+ 120   1        for(i=0;i<Y;i++)
+ 121   1        {
+ 122   2          Result*=X;
+ 123   2        }
+ 124   1        return Result;
+ 125   1      }
+ 126          
+ 127          
+ 128          
+ 129          
+ 130          void LCD_ShowNum(unsigned char Line,unsigned char Column,unsigned int Number,unsigned char Length)
+ 131          {
+*** WARNING C235 IN LINE 131 OF LCD.c: parameter 3: different types
+ 132   1        unsigned char i;
+ 133   1        Set_cursor(Line,Column);                  
+ 134   1        for(i=Length;i>0;i--)                        
+ 135   1        {
+ 136   2          LCD_Data(Number/lcd_Pow(10,i-1)%10+'0');   
+ 137   2        }
+ 138   1      }
+ 139          
+ 140          
+ 141          void LCD_ShowChar(unsigned char Line,unsigned char Column,unsigned char Char)
+ 142          {
+ 143   1        Set_cursor(Line,Column);
+ 144   1        LCD_Data(Char);
+ 145   1      }
+ 146          
+ 147          
+ 148          
+ 149          void LCD_ShowString(unsigned char Line,unsigned char Column,char *String)
+ 150          {
+ 151   1        unsigned char i;
+ 152   1        Set_cursor(Line,Column);
+ 153   1        for(i=0;String[i]!='\0';i++)
+ 154   1        {
+ 155   2          LCD_Data(String[i]);
+ 156   2        }
+ 157   1      }
+ 158          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    367    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      18
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

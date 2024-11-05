@@ -1,0 +1,115 @@
+C51 COMPILER V9.60.7.0   KEYCONTROLLER                                                     09/19/2024 15:56:27 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEYCONTROLLER
+OBJECT MODULE PLACED IN .\Objects\KeyController.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE KeyController.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\KeyController.lst) TABS(2) OBJECT(.\Objects\KeyController.obj)
+
+line level    source
+
+   1          # include <reg52.h>
+   2          # include "LCD.h"
+   3          # include "KeyController.h"
+   4          # include "ADC.h"
+   5          
+   6          
+   7          
+   8          sbit k1 = P3^1;   //Increment
+   9          sbit k2 = P3^0;   //Decrement
+  10          sbit PWM_PIN= P2^1;
+  11          unsigned int  ON_Period, OFF_Period;
+  12          unsigned int DutyCycle;
+  13          unsigned int DutyCycle_Limit ;
+  14          
+  15          
+  16          //PWM Setup
+  17          void Timer0_Intilization ()                    
+  18          {
+  19   1        TMOD =0x02;
+  20   1        TH0=0x17;
+  21   1        //TL0=0xFD;
+  22   1        TR0=1;
+  23   1        IE=0x82;
+  24   1          
+  25   1      }
+  26          
+  27          void Timer0 () interrupt 1                 
+  28          { 
+  29   1        PWM_PIN = ~PWM_PIN ;  
+  30   1        if(PWM_PIN==1)
+  31   1           {
+  32   2             //TH0=ON_Period >> 8;
+  33   2             TL0=ON_Period;
+  34   2           }
+  35   1           else
+  36   1           {
+  37   2          //   TH0=OFF_Period>> 8;
+  38   2             TL0=OFF_Period;
+  39   2           }  
+  40   1      }
+  41          
+  42          void Set_Duty_Cycle (float duty_cycle)
+  43          {  
+  44   1        unsigned int Period;
+  45   1        Period =255 - 0x17 ;
+  46   1        ON_Period =((Period/100.0)*duty_cycle);
+  47   1        OFF_Period = Period -ON_Period;
+  48   1        ON_Period =  255-ON_Period;
+  49   1        OFF_Period=  255-OFF_Period;
+  50   1        
+  51   1      
+  52   1      }
+  53          
+  54          
+C51 COMPILER V9.60.7.0   KEYCONTROLLER                                                     09/19/2024 15:56:27 PAGE 2   
+
+  55          void External_Keys()                      
+  56          {  
+  57   1      if(k1==0)                                  
+  58   1            { Delay(1000);                  
+  59   2              
+  60   2              if(DutyCycle_Limit<100)                             
+  61   2              { 
+  62   3                DutyCycle_Limit +=10;          
+  63   3                LCD_ShowNum(1,10,DutyCycle_Limit,3);   
+  64   3                LCD_ShowString(1,13,".00");
+  65   3            
+  66   3                 Delay(500);
+  67   3              }     
+  68   2              
+  69   2              while (k1 == 0);                 
+  70   2           }
+  71   1            
+  72   1           if(k2==0)                            
+  73   1            {     
+  74   2              Delay(100);                    
+  75   2                      
+  76   2              if(DutyCycle_Limit>0)             
+  77   2                 {  
+  78   3                 DutyCycle_Limit-=10;         
+  79   3                 LCD_ShowNum(1,10,DutyCycle_Limit,3);    
+  80   3                 LCD_ShowString(1,13,".00");
+  81   3                 Delay(500);
+  82   3                 }    
+  83   2              while (k2 == 0);                
+  84   2            }
+  85   1            
+  86   1              Set_Duty_Cycle(DutyCycle_Limit);  
+  87   1              Delay(500);
+  88   1      }
+  89            
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    268    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

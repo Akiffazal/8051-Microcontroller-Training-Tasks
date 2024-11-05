@@ -1,0 +1,6 @@
+".\Objects\ADC.obj",
+".\Objects\KeyController.obj",
+".\Objects\LCD.obj",
+".\Objects\main.obj" 
+TO ".\Objects\part5" 
+PRINT(".\Listings\part5.m51") RAMSIZE(256) 

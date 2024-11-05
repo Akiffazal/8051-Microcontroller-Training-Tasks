@@ -1,0 +1,3 @@
+".\Objects\DAC.obj" 
+TO ".\Objects\PART7" 
+PRINT(".\Listings\PART7.m51") RAMSIZE(256) 

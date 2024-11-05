@@ -1,0 +1,5 @@
+".\Objects\main.obj",
+".\Objects\LCD.obj",
+".\Objects\ADC_VOLTAGE.obj" 
+TO ".\Objects\23,4" 
+PRINT(".\Listings\23,4.m51") RAMSIZE(256) 

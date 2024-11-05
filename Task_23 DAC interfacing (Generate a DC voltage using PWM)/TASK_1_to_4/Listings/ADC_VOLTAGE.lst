@@ -1,0 +1,93 @@
+C51 COMPILER V9.60.7.0   ADC_VOLTAGE                                                       09/19/2024 16:00:43 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC_VOLTAGE
+OBJECT MODULE PLACED IN .\Objects\ADC_VOLTAGE.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ADC_VOLTAGE.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\ADC_VOLTAGE.lst) TABS(2) OBJECT(.\Objects\ADC_VOLTAGE.obj)
+
+line level    source
+
+   1          # include <reg52.h>
+   2          # include "LCD.h"
+   3          # include "ADC_VOLTAGE.h"
+   4          
+   5          
+   6          sbit CS =P3^5;          
+   7          sbit DCLK =P3^6;     
+   8          sbit DIN =P3^4;        
+   9          sbit DOUT =P3^7;        
+  10          
+  11          
+  12          unsigned char ADC_Driver (bit A0,bit A1,bit A2)         
+  13          {  
+  14   1        
+  15   1        unsigned char i, temp=0;
+  16   1         DCLK=0;                                 
+  17   1         CS=0;                                    
+  18   1         
+  19   1         DCLK=0;  DIN=1;  DCLK=1;               
+  20   1         DCLK=0;  DIN=A2;  DCLK=1;                
+  21   1         DCLK=0;  DIN=A1;  DCLK=1;               
+  22   1         DCLK=0;  DIN=A0;  DCLK=1;                
+  23   1         DCLK=0;  DIN=1;  DCLK=1;                  
+  24   1         DCLK=0;  DIN=1;  DCLK=1;                  
+  25   1         DCLK=0;  DIN=1;  DCLK=1;                  
+  26   1         DCLK=0;  DIN=1;  DCLK=1;                  
+  27   1        
+  28   1       
+  29   1      DCLK = 0;         
+  30   1       
+  31   1        Delay(10);
+  32   1      
+  33   1      
+  34   1        for(i=0;i<=7;i++)
+  35   1        {  
+  36   2          temp <<=1;              
+  37   2                        
+  38   2           DCLK=1;                
+  39   2           DCLK=0; 
+  40   2           temp |=DOUT;       
+  41   2             
+  42   2        }
+  43   1        
+  44   1         CS=1;            
+  45   1        
+  46   1        return temp;         
+  47   1      }
+  48          
+  49          
+  50           void DAC_VOLTAGE()
+  51          {
+  52   1        float voltage;
+  53   1        float value;
+  54   1      
+C51 COMPILER V9.60.7.0   ADC_VOLTAGE                                                       09/19/2024 16:00:43 PAGE 2   
+
+  55   1        value = ADC_Driver(0, 1, 1); 
+  56   1      Delay(500);
+  57   1        voltage =value * ( 5.0/ 255.0);
+  58   1      
+  59   1        LCD_ShowString(2, 0, "Voltage:");
+  60   1        LCD_ShowNum(2, 10, (unsigned int)voltage, 1);             
+  61   1        LCD_ShowChar(2, 11, '.');
+  62   1        LCD_ShowNum(2, 12 , (unsigned int)(voltage * 1000)%1000, 3); 
+  63   1        LCD_ShowChar(2, 15, 'V');
+  64   1        Delay(1000);
+  65   1      }
+  66            
+  67            
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    258    ----
+   CONSTANT SIZE    =      9    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       3
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

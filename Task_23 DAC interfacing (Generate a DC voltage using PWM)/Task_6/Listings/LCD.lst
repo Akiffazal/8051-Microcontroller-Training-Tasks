@@ -1,0 +1,217 @@
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:58:05 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD.l
+                    -st) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          # include <reg52.h>
+   2          # include "LCD.h"
+   3          #include  "ADC.h" 
+   4          
+   5          #define LCD_DATAPORT P0                          
+   6          sbit RW=P2^5;                                     
+   7          sbit RS=P2^6;                                     
+   8          sbit EN=P2^7;                                 
+   9          
+  10          sbit DB4=P0^4;                               
+  11          sbit DB5=P0^5;
+  12          sbit DB6=P0^6;
+  13          sbit DB7=P0^7;
+  14          
+  15          void Delay (unsigned int value)        
+  16          {
+  17   1       unsigned int j;
+  18   1           
+  19   1        for (j=0; j<value ;j++)
+  20   1        {  
+  21   2          
+  22   2          TH1=0xFC;
+  23   2          TL1=0x19;
+  24   2          TF1=0;
+  25   2          TR1=1;
+  26   2          while(TF1==0);
+  27   2          TF1=0;
+  28   2          TR1=0;
+  29   2        }
+  30   1      }
+  31          
+  32            
+  33          
+  34          void LCD4_write ( unsigned char Value)
+  35            {  
+  36   1        
+  37   1          
+  38   1          DB4=0x10 & Value;                     
+  39   1          DB5=0x20 & Value;              
+  40   1          DB6=0x40 & Value;          
+  41   1          DB7=0x80 & Value;            
+  42   1                           
+  43   1          EN=1;                    
+  44   1          Delay(4);              
+  45   1          EN=0;                    
+  46   1         
+  47   1        }
+  48            
+  49          
+  50          void LCD_Command (unsigned char cmd)
+  51          { 
+  52   1        RS=0;                          
+  53   1        RW=0;                         
+  54   1        LCD4_write(cmd & 0xF0);     
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:58:05 PAGE 2   
+
+  55   1        LCD4_write( cmd <<4 );         
+  56   1      }
+  57          
+  58          
+  59          void LCD_Data (unsigned char Data)
+  60          { 
+  61   1        RS=1;                       
+  62   1        RW=0;                         
+  63   1        LCD4_write ( Data & 0xF0);
+  64   1        LCD4_write (Data <<4 );
+  65   1        
+  66   1      }
+  67          
+  68          
+  69          void String_data (unsigned char *p)                
+  70          {
+  71   1        
+  72   1        while(*p)                                     
+  73   1        {
+  74   2          LCD_Data(*p++);                               
+  75   2        }
+  76   1      
+  77   1      }
+  78          
+  79          void LCD_Intialization(void)
+  80          {  
+  81   1                                                 
+  82   1         Delay(100);
+  83   1         LCD_Command(0x02);  
+  84   1         LCD_Command(0x28);
+  85   1         LCD_Command(0x0C);
+  86   1         LCD_Command(0x01);  
+  87   1         LCD_Command(0x80);  
+  88   1      }
+  89          
+  90          
+  91          
+  92           void Set_cursor(int row, int coloum)
+  93           {      
+  94   1         if(row==1)                                       
+  95   1            {   LCD_Command(0x80+coloum); }                  
+  96   1            else if(row==2)                               
+  97   1            {   LCD_Command(0xC0+coloum); }              
+  98   1       
+  99   1       
+ 100   1       }
+ 101          
+ 102          
+ 103           
+ 104           int lcd_Pow(int X,int Y)
+ 105          {
+ 106   1        unsigned char i;
+ 107   1        int Result=1;
+ 108   1        for(i=0;i<Y;i++)
+ 109   1        {
+ 110   2          Result*=X;
+ 111   2        }
+ 112   1        return Result;
+ 113   1      }
+ 114          
+ 115          
+ 116          
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:58:05 PAGE 3   
+
+ 117          
+ 118          void LCD_ShowNum(unsigned char Line,unsigned char Column,unsigned int Number,unsigned char Length)
+ 119          {
+*** WARNING C235 IN LINE 119 OF LCD.c: parameter 3: different types
+ 120   1        unsigned char i;
+ 121   1        Set_cursor(Line,Column);                    
+ 122   1        for(i=Length;i>0;i--)                       
+ 123   1        {
+ 124   2          LCD_Data(Number/lcd_Pow(10,i-1)%10+'0');   
+ 125   2        }
+ 126   1      }
+ 127          
+ 128          
+ 129          void LCD_ShowChar(unsigned char Line,unsigned char Column,unsigned char Char)
+ 130          {
+ 131   1        Set_cursor(Line,Column);
+ 132   1        LCD_Data(Char);
+ 133   1      }
+ 134          
+ 135          
+ 136          
+ 137          void LCD_ShowString(unsigned char Line,unsigned char Column,char *String)
+ 138          {
+ 139   1        unsigned char i;
+ 140   1        Set_cursor(Line,Column);
+ 141   1        for(i=0;String[i]!='\0';i++)
+ 142   1        {
+ 143   2          LCD_Data(String[i]);
+ 144   2        }
+ 145   1      }
+ 146          
+ 147          void LCD_ShowFloat(float num, int decimalPlaces) 
+ 148          { 
+ 149   1        int intValue,factor,i,decimalInt,digit; 
+ 150   1        float decimalPart;
+ 151   1           
+ 152   1          
+ 153   1          intValue = (int)num;
+ 154   1           decimalPart = num - intValue;
+ 155   1      
+ 156   1          // Display the integer part
+ 157   1          LCD_ShowNum(1, 12, intValue, 1);
+ 158   1      
+ 159   1          // Display the decimal point
+ 160   1          LCD_ShowChar(1, decimalPlaces+12 , '.');
+ 161   1      
+ 162   1          // Calculate the factor to convert decimal part to an integer
+ 163   1           factor = 1;
+ 164   1          for ( i = 0; i < decimalPlaces; i++) {
+ 165   2              factor *= 10;
+ 166   2          }
+ 167   1      
+ 168   1          // Convert the decimal part to an integer
+ 169   1           decimalInt = (int)(decimalPart * factor);
+ 170   1      
+ 171   1          // Display the decimal part
+ 172   1          for ( i = decimalPlaces; i > 0; i--) {
+ 173   2               digit = decimalInt % 10;
+ 174   2              LCD_ShowNum(1, decimalPlaces + 12+i , digit, 1);
+ 175   2              decimalInt /= 10;
+ 176   2          }
+ 177   1          
+C51 COMPILER V9.60.7.0   LCD                                                               09/19/2024 15:58:05 PAGE 4   
+
+ 178   1          
+ 179   1          
+ 180   1          
+ 181   1          
+ 182   1          
+ 183   1          
+ 184   1          
+ 185   1          
+ 186   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    569    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      34
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

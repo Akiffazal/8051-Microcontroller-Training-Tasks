@@ -1,0 +1,5 @@
+".\Objects\ADC.obj",
+".\Objects\LCD.obj",
+".\Objects\main.obj" 
+TO ".\Objects\PART6" 
+PRINT(".\Listings\PART6.m51") RAMSIZE(256) 

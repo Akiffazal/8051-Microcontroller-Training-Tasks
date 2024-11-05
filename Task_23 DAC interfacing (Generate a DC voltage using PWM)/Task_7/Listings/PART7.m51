@@ -1,0 +1,162 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/19/2024  15:58:46  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\DAC.obj TO .\Objects\PART7 PRINT (.\Listings\PART7.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\DAC.obj (DAC)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPDIV)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FCAST)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?CASTF)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LNEG)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\PART7 (DAC)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     006AH     UNIT         ?DT?DAC
+            DATA    0072H     0003H     UNIT         _DATA_GROUP_
+            IDATA   0075H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     0273H     UNIT         ?C?LIB_CODE
+            CODE    0281H     008CH     UNIT         ?C_C51STARTUP
+            CODE    030DH     006AH     UNIT         ?C_INITSEG
+            CODE    0377H     0060H     UNIT         ?PR?_SET_DUTY_CYCLE?DAC
+            CODE    03D7H     0028H     UNIT         ?PR?MAIN?DAC
+            CODE    03FFH     001AH     UNIT         ?PR?TIMER0_ISR?DAC
+            CODE    0419H     000CH     UNIT         ?PR?TIMER0_INIT?DAC
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\PART7 (DAC)
+
+
+SEGMENT                           DATA_GROUP 
+  +--> CALLED SEGMENT           START    LENGTH
+-----------------------------------------------
+?C_C51STARTUP                   -----    -----
+  +--> ?PR?MAIN?DAC
+  +--> ?C_INITSEG
+
+?PR?MAIN?DAC                    -----    -----
+  +--> ?PR?TIMER0_INIT?DAC
+  +--> ?PR?_SET_DUTY_CYCLE?DAC
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/19/2024  15:58:46  PAGE 2
+
+
+
+?PR?_SET_DUTY_CYCLE?DAC         0072H    0003H
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\PART7 (DAC)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        DAC
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:03FFH         PUBLIC        Timer0_ISR
+  C:0377H         PUBLIC        _Set_Duty_Cycle
+  D:00A8H         PUBLIC        IE
+  D:0008H         PUBLIC        index
+  D:000AH         PUBLIC        OFF_Period
+  C:03D7H         PUBLIC        main
+  C:0419H         PUBLIC        Timer0_Init
+  D:0089H         PUBLIC        TMOD
+  B:00A0H.1       PUBLIC        PWM_PIN
+  D:000CH         PUBLIC        sine_wave
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  D:006EH         PUBLIC        ON_Period
+  D:0070H         PUBLIC        i
+  -------         PROC          TIMER0_INIT
+  C:0419H         LINE#         15
+  C:0419H         LINE#         16
+  C:041CH         LINE#         17
+  C:041FH         LINE#         18
+  C:0421H         LINE#         19
+  C:0424H         LINE#         20
+  -------         ENDPROC       TIMER0_INIT
+  -------         PROC          TIMER0_ISR
+  C:03FFH         LINE#         22
+  C:0401H         LINE#         23
+  C:0403H         LINE#         25
+  C:0406H         LINE#         26
+  C:040AH         LINE#         27
+  C:040DH         LINE#         28
+  C:040FH         LINE#         29
+  C:0413H         LINE#         30
+  C:0416H         LINE#         31
+  C:0416H         LINE#         32
+  -------         ENDPROC       TIMER0_ISR
+  -------         PROC          _SET_DUTY_CYCLE
+  D:0072H         SYMBOL        duty_cycle
+  -------         DO            
+  D:0073H         SYMBOL        Period
+  -------         ENDDO         
+  C:0377H         LINE#         34
+  C:0379H         LINE#         35
+  C:037FH         LINE#         36
+  C:03B1H         LINE#         37
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/19/2024  15:58:46  PAGE 3
+
+
+  C:03BEH         LINE#         38
+  C:03CAH         LINE#         39
+  C:03D6H         LINE#         40
+  -------         ENDPROC       _SET_DUTY_CYCLE
+  -------         PROC          MAIN
+  C:03D7H         LINE#         42
+  C:03D7H         LINE#         43
+  C:03DAH         LINE#         45
+  C:03DAH         LINE#         46
+  C:03DFH         LINE#         47
+  C:03ECH         LINE#         48
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        DAC
+
+  -------         MODULE        ?C?FPMUL
+  C:000EH         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FPDIV
+  C:0117H         PUBLIC        ?C?FPDIV
+  -------         ENDMOD        ?C?FPDIV
+
+  -------         MODULE        ?C?FCAST
+  C:01BEH         PUBLIC        ?C?FCASTC
+  C:01B9H         PUBLIC        ?C?FCASTI
+  C:01B4H         PUBLIC        ?C?FCASTL
+  -------         ENDMOD        ?C?FCAST
+
+  -------         MODULE        ?C?CASTF
+  C:01F2H         PUBLIC        ?C?CASTF
+  -------         ENDMOD        ?C?CASTF
+
+  -------         MODULE        ?C?LNEG
+  C:0273H         PUBLIC        ?C?LNEG
+  -------         ENDMOD        ?C?LNEG
+
+Program Size: data=118.0 xdata=0 code=1053
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
