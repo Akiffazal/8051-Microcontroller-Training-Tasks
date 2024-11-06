@@ -1,0 +1,223 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 15:51:53 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "KEYPAD.h"
+   4          #include "stdio.h"
+   5          
+   6          
+   7          sbit Door_switch =P2^0;
+   8          bit flag=1;
+   9          int minute,second,i,min,sec;
+  10          char input[4];
+  11          unsigned char key,key1;
+  12          char formattime[6];
+  13          
+  14          
+  15          typedef enum 
+  16          {
+  17            Time_enter_state,
+  18            Door_status_state,
+  19            Run_counter_state
+  20          }
+  21          State;
+  22          State current_state=Time_enter_state;
+  23          
+  24          void main (void)
+  25          {
+  26   1        lcd_init();
+  27   1        lcd_showstring (0,0,"Oven Control");
+  28   1        Delay1(200);
+  29   1        while(1)
+  30   1        {
+  31   2          switch(current_state)
+  32   2          {
+  33   3            case Time_enter_state:
+  34   3            
+  35   3             lcd_showstring(1,0,"TimeEnter");
+  36   3             Delay1(200);
+  37   3             lcd_showstring(1,10,"00:00");
+  38   3                if(flag)
+  39   3                {
+  40   4                  for(i=0; i<4; i++)
+  41   4                  {
+  42   5                    input[i]='0';
+  43   5                  }
+  44   4                  for(i=0; i<4; i++)
+  45   4                  {
+  46   5                    key=keypad();
+  47   5                    if(key >='0' && key <='9')
+  48   5                    {
+  49   6                      input[3] = input[2];
+  50   6                      input[2] = input[1];
+  51   6                      input[1] = input[0];
+  52   6                      
+  53   6                      input[0]=key;
+  54   6                      
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 15:51:53 PAGE 2   
+
+  55   6                      lcd_showchar(1,10,input[3]);
+  56   6                      lcd_showchar(1,11,input[2]);
+  57   6                      lcd_showstring(1,12,":");
+  58   6                      lcd_showchar(1,13,input[1]);
+  59   6                      lcd_showchar(1,14,input[0]);
+  60   6                    }
+  61   5                  }
+  62   4                  minute=(input[3] - '0') * 10 + (input[2] - '0');
+  63   4                  second=(input[1] - '0') * 10 + (input[0] - '0');
+  64   4                  
+  65   4                  sprintf (formattime, "%02d:%02d",minute,second);
+  66   4                  lcd_showstring(1,10,formattime);
+  67   4                  flag = 0;
+  68   4                  if(input[0] !='0' || input[1] != '0' || input[2] != '0'  || input[3] != '0')
+  69   4                  {
+  70   5                    current_state=Door_status_state;
+  71   5                  }
+  72   4                    
+  73   4                }
+  74   3               else
+  75   3                 {
+  76   4                   current_state=Door_status_state;
+  77   4               }
+  78   3      break;
+  79   3            case Door_status_state:
+  80   3            key1=keypad();
+  81   3            if(key1 == 'C')
+  82   3              {
+  83   4                if(Door_switch == 0)
+  84   4                {
+  85   5                  lcd_clear_secondline();
+  86   5                  lcd_showstring(1,0,"Open Door");
+  87   5                  Delay1(1000);
+  88   5                  Beep(10);
+  89   5                }
+  90   4                else
+  91   4                {
+  92   5                  lcd_clear_secondline();
+  93   5                  lcd_showstring(1,0,"Close Door");
+  94   5                  Delay1(3000);
+  95   5                  lcd_clear_secondline();
+  96   5                  Delay1(1000);
+  97   5                  current_state=Run_counter_state;
+  98   5                  Delay1(1000);
+  99   5                }
+ 100   4            } 
+ 101   3               else if(key1 == '=')
+ 102   3                 {
+ 103   4                   flag=1;
+ 104   4                   Delay1(250);
+ 105   4                   current_state = Time_enter_state;
+ 106   4                   Delay1(100);
+ 107   4               }
+ 108   3      break;
+ 109   3            case Run_counter_state:
+ 110   3              sec=second;
+ 111   3             min=minute;
+ 112   3            
+ 113   3             if(  min<59 && sec<59)
+ 114   3             {
+ 115   4               while(1)
+ 116   4               {
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 15:51:53 PAGE 3   
+
+ 117   5                 while(Door_switch == 0)
+ 118   5                 {
+ 119   6                   lcd_showstring(1,0, "Open Door");
+ 120   6                   Beep(10);
+ 121   6                   while(keypad() != 'C');
+ 122   6                   
+ 123   6                     lcd_showstring(1,0,"Close Door");
+ 124   6                     Delay1(3000);
+ 125   6                     lcd_clearline(9);
+ 126   6                   }
+ 127   5                   sec--;
+ 128   5                   if(sec < 0)
+ 129   5                   {
+ 130   6                     sec = 59;
+ 131   6                     min--;
+ 132   6                   }
+ 133   5                   if(min < 0)
+ 134   5                   {
+ 135   6                     min=0;
+ 136   6                     sec=0;
+ 137   6                     
+ 138   6                   }
+ 139   5                    Timmer_Delay(160);
+ 140   5                   lcd_shownum(1,10,min,2);
+ 141   5                   lcd_showstring(1,12,":");
+ 142   5                   lcd_shownum(1,13,sec,2);
+ 143   5                   
+ 144   5                   if(keypad2() == 'C')
+ 145   5                   {
+ 146   6                     while(keypad() != 'C')
+ 147   6                     {
+ 148   7                       Delay1(500);
+ 149   7                       if(keypad2() == '=')
+ 150   7                       {
+ 151   8                         flag=1;
+ 152   8                         current_state= Time_enter_state;
+ 153   8                         break;
+ 154   8                       }
+ 155   7                     }
+ 156   6                     if(flag)
+ 157   6                     {
+ 158   7                       break;
+ 159   7                     }
+ 160   6                   }
+ 161   5                   if(min == 0 && sec == 0)
+ 162   5                   {
+ 163   6                     flag=1;
+ 164   6                     current_state=Time_enter_state;
+ 165   6                     break;
+ 166   6                   }
+ 167   5                 }
+ 168   4               }
+ 169   3             else
+ 170   3             {
+ 171   4               lcd_clear_secondline();
+ 172   4               Delay1(100);
+ 173   4               lcd_showstring(1,0,"invalid format");
+ 174   4               Beep(10);
+ 175   4               Delay1(25000);
+ 176   4               lcd_clear_secondline();
+ 177   4               flag=1;
+ 178   4               current_state=Time_enter_state;
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 15:51:53 PAGE 4   
+
+ 179   4             }
+ 180   3             break;
+ 181   3             }
+ 182   2             
+ 183   2          }
+ 184   1        }
+ 185          
+ 186          
+ 187          
+ 188          
+ 189          
+ 190          
+ 191          
+ 192          
+ 193          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    797    ----
+   CONSTANT SIZE    =     77    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     23    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
