@@ -1,0 +1,4 @@
+".\Objects\main.obj",
+".\Objects\lcd.obj" 
+TO ".\Objects\RTC-SOFTWARE" 
+PRINT(".\Listings\RTC-SOFTWARE.m51") RAMSIZE(256) 

@@ -1,0 +1,290 @@
+C51 COMPILER V9.60.7.0   DS1302                                                            09/26/2024 12:58:18 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE DS1302
+OBJECT MODULE PLACED IN .\Objects\DS1302.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE DS1302.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\DS
+                    -1302.lst) TABS(2) OBJECT(.\Objects\DS1302.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "DS1302.h"
+   3          #include <string.h>
+   4          #include "stdio.h"
+   5          
+   6          
+   7          
+   8          unsigned int read_bytes[12];    
+   9          void SCLK_Pulse()
+  10          {
+  11   1        DS1302_CLK=1;
+  12   1        DS1302_CLK=0;
+  13   1      }
+  14          void send_bit(unsigned int bitt)
+  15          {
+  16   1        if(bitt!=0)
+  17   1        {
+  18   2          DS1302_IO=1;                    //one bit write
+  19   2        }
+  20   1        else
+  21   1        {
+  22   2          DS1302_IO=0;
+  23   2        }
+  24   1      }
+  25          void write_byte(unsigned int byte)
+  26          {
+  27   1        unsigned int i,Bit;
+  28   1        for(i=0; i<8; i++)
+  29   1        {                                        //rtc write byte
+  30   2          Bit =byte &(1<<i);
+  31   2          send_bit(Bit);
+  32   2          SCLK_Pulse();
+  33   2        }
+  34   1      }
+  35          unsigned char read_byte(unsigned char cmd)
+  36          {
+  37   1        unsigned int j,dat=0;
+  38   1        write_byte(cmd);
+  39   1        for(j=0; j<8; j++)
+  40   1        {
+  41   2          dat>>=1;
+  42   2          if(DS1302_IO)
+  43   2          {
+  44   3            dat|=0x80;
+  45   3          }
+  46   2          else
+  47   2          {
+  48   3            dat&=0x7F;
+  49   3          }
+  50   2          SCLK_Pulse();
+  51   2        }
+  52   1        return dat;
+  53   1      }
+  54          void DS1302_writebyte(unsigned char cmd, unsigned char value)
+C51 COMPILER V9.60.7.0   DS1302                                                            09/26/2024 12:58:18 PAGE 2   
+
+  55          {
+  56   1        DS1302_CE=1;
+  57   1        write_byte(cmd);                      //rtc write byte at address
+  58   1        write_byte(value);
+  59   1        DS1302_CE=0;
+  60   1      }
+  61          void DS1302_readbyte()
+  62          {
+  63   1        unsigned int dat=0,i,j;
+  64   1        DS1302_CE=1;
+  65   1        
+  66   1        write_byte(DS1302_READ_BURST);
+  67   1        for(i=0; i<8; i++)           //store in array
+  68   1        {
+  69   2          dat=0;
+  70   2          for(j=0; j<8; j++)         //bit by bit read
+  71   2          {
+  72   3            dat>>=1;
+  73   3          if(DS1302_IO)
+  74   3          {                                           //reading ta enable
+  75   4            dat|=0x80;
+  76   4          }
+  77   3          else
+  78   3          {
+  79   4            dat&=0x7F;
+  80   4          }
+  81   3          SCLK_Pulse();
+  82   3          }
+  83   2          read_bytes[i]=dat;
+  84   2        } 
+  85   1        DS1302_CE=0;  
+  86   1      }
+  87          void DS1302_init()
+  88          {
+  89   1        unsigned char r;
+  90   1        DS1302_CE=0; 
+  91   1        DS1302_CLK=0;
+  92   1        DS1302_writebyte(DS1302_CONTROL,0x00);
+  93   1        DS1302_writebyte(DS1302_CHARGER,0xAB);
+  94   1        
+  95   1        r=read_byte(DS1302_SECOND_READ);                
+  96   1        if((r&DS1302_SECOND_READ)!=0)
+  97   1          DS1302_writebyte(DS1302_SECOND,0);              //zarah value zero ka
+  98   1      }
+  99          
+ 100          void DS1302_settime(unsigned char hour, unsigned char minute, unsigned char second)
+ 101          {
+ 102   1        DS1302_writebyte(DS1302_SECOND,second);
+ 103   1        DS1302_writebyte(DS1302_MINUTE,minute);
+ 104   1        DS1302_writebyte(DS1302_HOUR,hour);
+ 105   1      
+ 106   1      }
+ 107          void lcd_display(unsigned char number)
+ 108          {
+ 109   1        lcd_char(((number>>4)&0x0F)+0x30); //ten
+ 110   1        lcd_char((number&0x0F)+0x30);   //unit
+ 111   1      }
+ 112          
+ 113          void DS1302_gettime(void)
+ 114          {
+ 115   1        lcd_set_cursor(0,0);
+ 116   1        lcd_string("TIME:");
+C51 COMPILER V9.60.7.0   DS1302                                                            09/26/2024 12:58:18 PAGE 3   
+
+ 117   1        
+ 118   1        lcd_set_cursor(0,6);
+ 119   1        lcd_display(read_bytes[2]);
+ 120   1        lcd_char(':');
+ 121   1        delay(10);
+ 122   1        
+ 123   1        
+ 124   1        lcd_set_cursor(0,9);
+ 125   1        lcd_display(read_bytes[1]);
+ 126   1        lcd_char(':');
+ 127   1        delay(10);
+ 128   1        
+ 129   1        lcd_set_cursor(0,12);
+ 130   1        lcd_display(read_bytes[0]);
+ 131   1        delay(10);
+ 132   1          
+ 133   1      }
+ 134          //void DS1302_setdate(unsigned char day, unsigned char month, unsigned char year)
+ 135          //{
+ 136          //DS1302_writebyte(DS1302_DATE,day);
+ 137          //DS1302_writebyte(DS1302_MONTH,month);
+ 138          //DS1302_writebyte(DS1302_YEAR,year);
+ 139          //}
+ 140          //void DS1302_getdate(void)
+ 141          //{
+ 142          //  lcd_set_cursor(1,0);
+ 143          //  lcd_string("DATE:");
+ 144          //  
+ 145          //  lcd_set_cursor(1,6);
+ 146          //  lcd_display(read_bytes[3]);
+ 147          //  lcd_char(':');
+ 148          //  delay(10);
+ 149          //  
+ 150          //  lcd_set_cursor(1,9);
+ 151          //  lcd_display(read_bytes[4]);
+ 152          //  lcd_char(':');
+ 153          //  delay(10);
+ 154          //  
+ 155          //  lcd_set_cursor(1,12);
+ 156          //  lcd_display(read_bytes[6]);
+ 157          //  delay(10);
+ 158          //}
+ 159          void inttoASCII(int num, char *buffer)
+ 160          {
+ 161   1        sprintf(buffer, "%d", num);
+ 162   1      }
+ 163          void lcd_display_int(int num)
+ 164          {
+ 165   1        char buffer[10];
+ 166   1        inttoASCII(num, buffer);
+ 167   1        lcd_string(buffer);
+ 168   1        
+ 169   1      }
+ 170          
+ 171          
+ 172          //unsigned int dayinmonth (unsigned char mon, unsigned int year)
+ 173          //  {
+ 174          //    unsigned int day;
+ 175          //    switch(mon)
+ 176          //    {
+ 177          //      case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+ 178          //        day=31;
+C51 COMPILER V9.60.7.0   DS1302                                                            09/26/2024 12:58:18 PAGE 4   
+
+ 179          //      break;
+ 180          //      case 4: case 6: case 9: case 11:
+ 181          //        day=30;
+ 182          //      break;
+ 183          //      case 2:
+ 184          //        if((year % 4 == 0 && year % 100 != 0) || (year % 400 ==0))
+ 185          //        {
+ 186          //          day=29;
+ 187          //        }
+ 188          //        else
+ 189          //        {
+ 190          //          day=28;
+ 191          //        }
+ 192          //        break;
+ 193          //      default:
+ 194          //        day=0;
+ 195          //      
+ 196          //    }
+ 197          //    return day;
+ 198          //  }
+ 199          
+ 200          void lcd_init()
+ 201          {
+ 202   1        lcd_command(0x38);
+ 203   1        lcd_command(0x0C);
+ 204   1        lcd_command(0x01);
+ 205   1        lcd_command(0x80);
+ 206   1        
+ 207   1      }
+ 208          
+ 209          void lcd_command(unsigned char cmd)
+ 210          {
+ 211   1        lcd_data=cmd;
+ 212   1        RW=0;
+ 213   1        RS=0;
+ 214   1        EN=1;
+ 215   1        delay(10);
+ 216   1        EN=0;
+ 217   1        delay(10);
+ 218   1      }
+ 219          void lcd_char(unsigned char dat)
+ 220          {
+ 221   1        lcd_data=dat;
+ 222   1        RW=0;
+ 223   1        RS=1;
+ 224   1        EN=1;
+ 225   1        delay(10);
+ 226   1        EN=0;
+ 227   1        delay(10);
+ 228   1      }
+ 229          void lcd_string(unsigned char *str)
+ 230          {
+ 231   1        int i;
+ 232   1        for(i=0; str[i]!=0; i++)
+ 233   1        {
+ 234   2          lcd_char(str[i]);
+ 235   2        }
+ 236   1        
+ 237   1      }
+ 238          void lcd_set_cursor(unsigned char row, unsigned char col)
+ 239          {
+ 240   1        unsigned char position;
+C51 COMPILER V9.60.7.0   DS1302                                                            09/26/2024 12:58:18 PAGE 5   
+
+ 241   1        if(row==0)
+ 242   1        {
+ 243   2          position=0x80+col;
+ 244   2        }
+ 245   1        else
+ 246   1        {
+ 247   2          position=0xC0+col;
+ 248   2        }
+ 249   1        lcd_command(position);
+ 250   1      }
+ 251          
+ 252          void delay (unsigned int time)
+ 253          {
+ 254   1        unsigned int i,j;
+ 255   1        for(i=0; i<time; i++)
+ 256   1        for(j=0; j<127; j++);
+ 257   1        
+ 258   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    571    ----
+   CONSTANT SIZE    =      9    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     24      19
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,184 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 16:01:55 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "DS1302.h"
+   3          #include <string.h>
+   4          
+   5          unsigned char sec =0;
+   6          unsigned char min =59;
+   7          unsigned char hour=23;
+   8          unsigned char day=31;
+   9          unsigned char mon=12;
+  10          unsigned int year=24;
+  11          unsigned int d1000_ms=0;
+  12          unsigned int numday ;
+  13          
+  14          sbit d1 = P2^0;
+  15          void timer_interrupt () interrupt 1
+  16          {
+  17   1        d1000_ms++;
+  18   1        if(d1000_ms==5000)
+  19   1        {
+  20   2          sec++;
+  21   2          d1 = ~d1;
+  22   2        lcd_set_cursor(0,14);
+  23   2        lcd_display_int(sec );
+  24   2        lcd_char(' ');
+  25   2       
+  26   2        lcd_set_cursor(0,13);
+  27   2        lcd_char(':');
+  28   2          
+  29   2        lcd_set_cursor(0,10);
+  30   2        lcd_display_int(min);
+  31   2        lcd_char(' ');
+  32   2          
+  33   2        lcd_set_cursor(0,8);
+  34   2        lcd_char(':');
+  35   2        lcd_set_cursor(0,5);
+  36   2        lcd_display_int(hour);
+  37   2        lcd_char(' ');
+  38   2          
+  39   2        lcd_set_cursor(1,5);
+  40   2        lcd_display_int(day);
+  41   2        lcd_char(' ');
+  42   2        
+  43   2        lcd_set_cursor(1,8);
+  44   2        lcd_char(':');
+  45   2        
+  46   2        lcd_set_cursor(1,10);
+  47   2        lcd_display_int(mon);
+  48   2        lcd_char(' ');
+  49   2        
+  50   2        lcd_set_cursor(1,13);
+  51   2        lcd_char(':');
+  52   2        
+  53   2        lcd_set_cursor(1,14);
+  54   2        lcd_display_int(year);
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 16:01:55 PAGE 2   
+
+  55   2        lcd_char(' ');
+  56   2        
+  57   2      
+  58   2        numday = dayinmonth(mon, year);
+  59   2      
+  60   2          if(sec==60)
+  61   2          {
+  62   3            sec=0;
+  63   3            min++;
+  64   3          }
+  65   2          if(min==60)
+  66   2          {
+  67   3            
+  68   3            min=0;
+  69   3            hour++;
+  70   3          }
+  71   2          if(hour==24)
+  72   2          {
+  73   3            hour=0;
+  74   3            day++;
+  75   3          }
+  76   2          if(day > numday)
+  77   2          {
+  78   3            day=1;
+  79   3            mon++;
+  80   3          }
+  81   2          if(mon > 12)
+  82   2          {
+  83   3            mon=1;
+  84   3            year++;
+  85   3          }
+  86   2      
+  87   2          d1000_ms=0;
+  88   2        }
+  89   1      }
+  90          
+  91          void main()
+  92          {
+  93   1        lcd_init();
+  94   1        lcd_set_cursor(0,0);
+  95   1        lcd_string("Time:");
+  96   1        lcd_set_cursor(1,0);
+  97   1        lcd_string("Date:");
+  98   1        TMOD = 0x02;
+  99   1        TH0= 0xD1; 
+ 100   1        ET0=1;
+ 101   1        EA=1;
+ 102   1        TR0=1;
+ 103   1      
+ 104   1        while(1)
+ 105   1        {
+ 106   2          
+ 107   2        }
+ 108   1        
+ 109   1      }
+ 110          
+ 111          
+ 112          
+ 113          
+ 114          
+ 115          
+ 116          
+C51 COMPILER V9.60.7.0   MAIN                                                              09/19/2024 16:01:55 PAGE 3   
+
+ 117          
+ 118          
+ 119          
+ 120          
+ 121          
+ 122          
+ 123          
+ 124          
+ 125          
+ 126          
+ 127          
+ 128          
+ 129          
+ 130          
+ 131          
+ 132          
+ 133          
+ 134          
+ 135          
+ 136          
+ 137          
+ 138          
+ 139          
+ 140          //void main()
+ 141          //{
+ 142          //  lcd_init();
+ 143          //  DS1302_init();
+ 144          //  DS1302_settime(0x23,0x59,0x50);
+ 145          //  DS1302_setdate(0x31,0x12,0x23);
+ 146          //  while(1)
+ 147          //  {
+ 148          //    DS1302_CE=1;
+ 149          //    DS1302_readbyte();
+ 150          //    DS1302_CE=0;
+ 151          //    
+ 152          //    DS1302_gettime();
+ 153          //    DS1302_getdate();
+ 154          //    
+ 155          //  }
+ 156          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    372    ----
+   CONSTANT SIZE    =     12    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     11    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

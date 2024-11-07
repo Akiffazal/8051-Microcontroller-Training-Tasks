@@ -1,0 +1,4 @@
+".\Objects\DS1302.obj",
+".\Objects\main.obj" 
+TO ".\Objects\software rtc 25.2" 
+PRINT(".\Listings\software rtc 25.m51") RAMSIZE(256) 
