@@ -1,0 +1,89 @@
+C51 COMPILER V9.60.7.0   FC                                                                09/19/2024 16:05:23 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FC
+OBJECT MODULE PLACED IN .\Objects\FC.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE FC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\FC.lst
+                    -) TABS(2) OBJECT(.\Objects\FC.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include "LCD.h"
+   3          #include "string.h"
+   4          
+   5          
+   6          void Delay2 (unsigned int );
+   7          
+   8          sbit Input =P3^4;
+   9          unsigned int Pulses;
+  10          
+  11          
+  12          
+  13          void Delay2 (unsigned int values)
+  14          {
+  15   1        unsigned int i;
+  16   1        for(i=0; i<values; i++)
+  17   1        {
+  18   2          TH1=0xFC;
+  19   2          TL1=0x66;
+  20   2          TF1=0;
+  21   2          TR1=1;
+  22   2          while(TF1==0);
+  23   2          TF1=0;
+  24   2          TR1=0;
+  25   2        }
+  26   1      }
+  27          void main (void)
+  28          {
+  29   1        lcd_init();
+  30   1        Input=1;
+  31   1        while(1)
+  32   1        {
+  33   2          TMOD=0x15;
+  34   2          TH0=0x00;
+  35   2          TL0=0x00;
+  36   2          TR0=1;
+  37   2          Delay2(1000);
+  38   2          TR0=0;
+  39   2          Pulses=(TH0*256)+TL0;
+  40   2          
+  41   2          if(TH0 == 0xFF && TL0 == 0xFF)
+  42   2          {
+  43   3            lcd_command(0x01);
+  44   3            lcd_showstring(0, 5, "ERROR");
+  45   3          }
+  46   2          else
+  47   2          {
+  48   3            lcd_command(0x01);
+  49   3            lcd_showstring(0,0 ,"FreQuency countr");
+  50   3            lcd_showstring(1,1,"FreQ:");
+  51   3            lcd_shownum(1,6,Pulses,5);
+  52   3            lcd_showstring(1,12,"HZ");
+  53   3          }
+  54   2        }
+C51 COMPILER V9.60.7.0   FC                                                                09/19/2024 16:05:23 PAGE 2   
+
+  55   1      }
+  56          
+  57          
+  58          
+  59          
+  60          
+  61          
+  62          
+  63          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    164    ----
+   CONSTANT SIZE    =     32    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
