@@ -1,0 +1,6 @@
+".\Objects\SMC.obj",
+".\Objects\LCD.obj",
+".\Objects\KEYPAD.obj",
+".\Objects\servo motor.obj" 
+TO ".\Objects\SERVO MOTOR CONTROL" 
+PRINT(".\Listings\SERVO MOTOR CONTROL.m51") RAMSIZE(256) 
